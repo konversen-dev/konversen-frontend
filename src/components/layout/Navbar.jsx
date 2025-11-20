@@ -40,11 +40,11 @@ export default function Navbar() {
           </NavLink>
 
           <NavLink
-            to="/campaign"
+            to="/campaign-sales"
             className={({ isActive }) =>
               `relative pb-1 text-sm font-semibold transition ${
                 isActive
-                  ? "text-primary-light after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:bg-primary-light"
+                  ? "text-gray-700 after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:bg-primary-light"
                   : "text-gray-700 hover:text-primary-light"
               }`
             }

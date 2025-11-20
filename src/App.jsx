@@ -7,6 +7,7 @@ import Login from "./pages/Login.jsx";
 
 // Sales
 import Dashboard from "./pages/Sales/Dashboard.jsx";
+import Campaign from "./pages/Sales/Campaign.jsx";
 import Profile from "./pages/Sales/Profile.jsx";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
 
         {/* Sales */}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/campaign-sales" element={<Campaign />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
