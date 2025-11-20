@@ -14,7 +14,7 @@ export default function TableCampaign({ searchQuery, filters }) {
       targetLead: 100,
       period: "10/02/2025 - 21/04/2025",
       status: "Active",
-      participants: " Not Joined",
+      participate: " Not Joined",
       pic: "Irvan Wijaya",
     },
     {
@@ -23,7 +23,7 @@ export default function TableCampaign({ searchQuery, filters }) {
       targetLead: 270,
       period: "12/02/2025 - 21/04/2025",
       status: "Completed",
-      participants: "Joined",
+      participate: "Joined",
       pic: "Vito Edelman",
     },
     {
@@ -32,7 +32,7 @@ export default function TableCampaign({ searchQuery, filters }) {
       targetLead: 150,
       period: "01/03/2025 - 25/04/2025",
       status: "Active",
-      participants: "Not Joined",
+      participate: "Not Joined",
       pic: "Bagas Sutandyo",
     },
   ]);
@@ -41,15 +41,21 @@ export default function TableCampaign({ searchQuery, filters }) {
   const [openModal, setOpenModal] = useState(false);
 
   // Join logic
-  const handleToggleJoin = (id) => {
-    setCampaigns((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, 
-            participants: 
-            item.participants === "Joined" ? "Not Joined" : "Joined",} : item
-      )
+const handleToggleJoin = (id) => {
+  setCampaigns((prev) => {
+    const updated = prev.map((item) =>
+      item.id === id
+        ? { ...item, participate: item.participate === "Joined" ? "Not Joined" : "Joined" }
+        : item
     );
-  };
+
+    // update selectedCampaign juga
+    const updatedSelected = updated.find((c) => c.id === id);
+    setSelectedCampaign(updatedSelected);
+
+    return updated;
+  });
+};
 
   // Table columns
   const columns = [
@@ -63,7 +69,7 @@ export default function TableCampaign({ searchQuery, filters }) {
       render: (value) => <StatusBadge status={value} />,
     },
     { header: "PIC", accessor: "pic" },
-    { header: "Participants", accessor: "participants" },
+    { header: "participate", accessor: "participate" },
     {
       header: "Action",
       accessor: "action",
@@ -81,7 +87,7 @@ export default function TableCampaign({ searchQuery, filters }) {
 
           {/* Join campaign */}
             {row.status === "Active" && (
-                row.participants === "Joined" ? (
+                row.participate === "Joined" ? (
                 // TOMBOL MINUS = LEAVE
                 <FiMinusCircle
                     className="cursor-pointer text-red-500 hover:text-red-700"
@@ -110,15 +116,15 @@ export default function TableCampaign({ searchQuery, filters }) {
     const matchStatus =
       filters.status === "" || item.status === filters.status;
 
-    const matchParticipants =
-      filters.participants === "" || item.participants === filters.participants;
+    const matchparticipate =
+      filters.participate === "" || item.participate === filters.participate;
 
     const matchPeriod =
       filters.period === "" ||
       (filters.period === "This Month" && item.period.includes("03/2025")) ||
       (filters.period === "This Year" && item.period.includes("2025"));
 
-    return matchSearch && matchStatus && matchParticipants && matchPeriod;
+    return matchSearch && matchStatus && matchparticipate && matchPeriod;
   });
 
   // Pagination

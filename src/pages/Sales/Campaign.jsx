@@ -11,14 +11,14 @@ export default function Campaign() {
   const [filters, setFilters] = useState({
     period: "",
     status: "",
-    participants: "",
+    participate: "",
   });
 
   // Filter dropdown options untuk Campaign
   const filterOptions = [
     { id: "period", placeholder: "All Periods", options: ["This Month", "Last Month", "This Year"] },
     { id: "status", placeholder: "All Status", options: ["Active", "Completed"] },
-    { id: "participants", placeholder: "All Participants", options: ["Joined", "Not Joined"] },
+    { id: "participate", placeholder: "All participate", options: ["Joined", "Not Joined"] },
   ];
 
   const handleSearchChange = (query) => setSearchQuery(query);

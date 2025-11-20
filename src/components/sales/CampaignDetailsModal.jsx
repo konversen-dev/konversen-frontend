@@ -3,10 +3,13 @@ import { X } from "lucide-react";
 import StatusBadge from "../utils/StatusBadge";
 
 export default function CampaignDetailsModal({ data, onClose, onJoin }) {
-  // pastikan participants selalu array
+  // List peserta
   const participants = Array.isArray(data?.participants)
     ? data.participants
     : [];
+
+  // Status participate user
+  const participateStatus = data?.participate || "Not Joined";
 
   return (
     <div className="p-4 text-primary-darkest text-sm">
@@ -32,10 +35,24 @@ export default function CampaignDetailsModal({ data, onClose, onJoin }) {
       {/* Period */}
       <DetailItem label="Period" value={data?.period} />
 
-      {/* Status */}
+      {/* Campaign Status */}
       <div className="flex items-center gap-3 mb-3">
         <span className="font-semibold">Status:</span>
         <StatusBadge status={data?.status} />
+      </div>
+
+      {/* Participate Status (baru ditambahkan) */}
+      <div className="flex items-center gap-2 mb-4">
+        <span className="font-semibold">Participate:</span>
+        <span
+          className={`px-2 py-1 rounded-md text-xs font-medium
+            ${participateStatus === "Joined"
+              ? "bg-green-100 text-green-700"
+              : "bg-gray-100 text-gray-600"
+            }`}
+        >
+          {participateStatus}
+        </span>
       </div>
 
       <div className="border-b mb-4" />
@@ -54,9 +71,11 @@ export default function CampaignDetailsModal({ data, onClose, onJoin }) {
 
       <div className="border-b mb-4" />
 
-      {/* Participants */}
+      {/* All Participants */}
       <div>
-        <span className="font-semibold text-primary-darkest">Participants:</span>
+        <span className="font-semibold text-primary-darkest">
+          All Participants:
+        </span>
         <div className="flex flex-wrap gap-2 mt-2">
           {participants.map((email, idx) => (
             <div
@@ -74,13 +93,13 @@ export default function CampaignDetailsModal({ data, onClose, onJoin }) {
         onClick={onJoin}
         className="w-full py-2 mt-5 bg-primary-light hover:bg-[#C86F0D] text-white text-sm font-semibold rounded-lg"
       >
-        {data?.participants === "Joined" ? "Leave" : "Join / Gabung"}
+        {participateStatus === "Joined" ? "Leave" : "Join / Gabung"}
       </button>
     </div>
   );
 }
 
-/* Detail Item (sama formatnya seperti LeadDetailsModal) */
+/* Detail Item */
 function DetailItem({ label, value }) {
   return (
     <p className="mb-2">
