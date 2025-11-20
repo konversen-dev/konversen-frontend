@@ -133,7 +133,7 @@ export default function LeadDetailsModal({ lead, onStatusChange }) {
         {/* TEXT INPUT */}
         <textarea
           placeholder="Type message here..."
-          className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none focus:ring-2 focus:ring-primary-light focus:outline-none mt-4"
+          className="w-full h-12 border border-gray-300 rounded-lg p-3 text-sm resize-none focus:ring-2 focus:ring-primary-light focus:outline-none mt-4"
           rows={4}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
@@ -144,7 +144,7 @@ export default function LeadDetailsModal({ lead, onStatusChange }) {
           {/* SELECT TIPE */}
           <CustomDropdown
             options={["Feedback", "Internal"]}
-            onChange={(e) => setNewType(e.target.value)}
+            onChange={(value) => setNewType(value)}
           />
 
           <button
