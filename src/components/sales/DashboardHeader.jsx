@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../layout/Header.jsx";
 import Button from "../utils/Button.jsx";
 
-export default function DashboardHeader({ campaignOptions, onAddLead }) {
+export default function DashboardHeader({ campaignOptions }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
       <Header
@@ -12,7 +12,6 @@ export default function DashboardHeader({ campaignOptions, onAddLead }) {
 
       <div className="flex gap-3 mt-4 sm:mt-0">
         <Button text="Current campaign" variant="dropdown" options={campaignOptions} />
-        <Button text="Add Lead" variant="primary" icon="plus" onClick={onAddLead} />
       </div>
     </div>
   );
