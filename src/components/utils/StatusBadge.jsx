@@ -6,6 +6,8 @@ const StatusBadge = ({ status, labelOverride }) => {
     contacted: 'bg-blue-400',
     converted: 'bg-green-500',
     failed: 'bg-red-500',
+    active: 'bg-green-600',
+    completed:'bg-red-600',
   };
 
   const labelMap = {
@@ -13,6 +15,8 @@ const StatusBadge = ({ status, labelOverride }) => {
     contacted: 'Contacted',
     converted: 'Converted',
     failed: 'Failed',
+    active: 'Active',
+    completed: 'Completed',
   };
 
   const key = (status || '').toLowerCase();
