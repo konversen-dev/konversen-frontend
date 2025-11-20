@@ -7,6 +7,7 @@ import Login from "./pages/Login.jsx";
 
 // Sales
 import Dashboard from "./pages/Sales/Dashboard.jsx";
+import Profile from "./pages/Sales/Profile.jsx";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
 
         {/* Sales */}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );
