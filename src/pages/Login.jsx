@@ -5,11 +5,26 @@ import loginIllustration from "../assets/sales/login-illustration.png";
 export default function Login() {
   const navigate = useNavigate();
 
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
+  //   // (nanti bisa tambahkan logika auth di sini)
+  //   navigate("/dashboard");
+  // };
+
   const handleLogin = (e) => {
     e.preventDefault();
-    // (nanti bisa tambahkan logika auth di sini)
-    navigate("/dashboard");
+    const email = e.target.email.value;
+
+    if (email.toLowerCase().includes("admin")) {
+      navigate("/admin");
+    } else if (email.toLowerCase().includes("manager")) {
+      navigate("/manager");
+    } else {
+      navigate("/dashboard");
+    }
   };
+
+
 
   return (
     <div className="flex h-screen font-lato">
@@ -29,6 +44,7 @@ export default function Login() {
               <input
                 type="email"
                 id="email"
+                name="email" //ini tambahan
                 placeholder="Your Email"
                 className="w-full border text-sm border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-light"
               />
