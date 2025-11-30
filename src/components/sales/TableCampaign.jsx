@@ -63,13 +63,14 @@ const handleToggleJoin = (id) => {
     { header: "Campaign Name", accessor: "name" },
     { header: "Target Lead", accessor: "targetLead" },
     { header: "Period", accessor: "period" },
+
+    { header: "PIC", accessor: "pic" },
+    { header: "participate", accessor: "participate" },
     {
       header: "Status",
       accessor: "status",
       render: (value) => <StatusBadge status={value} />,
     },
-    { header: "PIC", accessor: "pic" },
-    { header: "participate", accessor: "participate" },
     {
       header: "Action",
       accessor: "action",
