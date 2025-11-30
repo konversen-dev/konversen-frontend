@@ -29,10 +29,10 @@ export default function Dashboard() {
 
   // Filter dropdown options
   const filterOptions = [
-    { id: "score", placeholder: "All Scores", options: ["Low", "Medium", "High"] },
     { id: "age", placeholder: "All Ages", options: ["<25", "25-40", "40+"] },
-    { id: "status", placeholder: "All Status", options: ["Pending", "Contacted", "Converted"] },
     { id: "job", placeholder: "All Jobs", options: ["Sales", "PNS", "Freelancer"] },
+    { id: "score", placeholder: "All Scores", options: ["Low", "Medium", "High"] },
+    { id: "status", placeholder: "All Status", options: ["Pending", "Contacted", "Converted"] },
   ];
 
   return (
