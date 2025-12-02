@@ -631,7 +631,8 @@ export default function AdminDashboard() {
   const currentItems = filteredAccounts.slice(indexOfFirst, indexOfLast);
 
   /* ---- TABEL ---- */
-  const columns = [
+/* ---- TABEL ---- */
+const columns = [
   {
     header: "Profile",
     accessor: "avatar",
@@ -679,13 +680,44 @@ export default function AdminDashboard() {
   {
     header: "Action",
     accessor: "action",
-    render: (__IGNORE, row) => (
-      <div className="flex gap-3 text-sm text-[#1262BE]">
-        <button onClick={() => setEditingAccount(row)}>Edit</button>
+    render: (_VALUE, row) => (
+      <div className="flex items-center gap-3 text-lg">
+        {/* Logs / Activity */}
+        <button
+          type="button"
+          title="View activity logs"
+          onClick={() => setDetailAccount(row)}
+          className="text-[#1262BE] hover:text-blue-700 transition-colors"
+        >
+          <FiEye />
+        </button>
+
+        {/* Edit */}
+        <button
+          type="button"
+          title="Edit account"
+          onClick={() => setEditingAccount(row)}
+          className="text-[#1262BE] hover:text-blue-700 transition-colors"
+        >
+          <FiEdit2 />
+        </button>
+
+        {/* Delete */}
+        <button
+          type="button"
+          title="Delete account"
+          onClick={() =>
+            setAccounts((prev) => prev.filter((acc) => acc.id !== row.id))
+          }
+          className="text-red-500 hover:text-red-700 transition-colors"
+        >
+          <FiTrash2 />
+        </button>
       </div>
     ),
   },
 ];
+
 
 
   const handleFilterChange = (id, value) => {
