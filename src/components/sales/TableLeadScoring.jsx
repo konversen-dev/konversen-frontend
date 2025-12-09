@@ -7,101 +7,158 @@ import LeadDetailsModal from "./LeadDetailsModal.jsx";
 import Pagination from "../utils/Pagination.jsx";
 
 export default function TableLeadScoring({ searchQuery, filters }) {
-  // ⬇️ Ubah dari const → useState
+
+  // ====================== DUMMY DATA =======================
   const [leads, setLeads] = useState([
-    { id: "LD-01", name: "David Fahrreza", probability: "92%", age: 42, job: "Wirausaha", status: "Pending", lastContact: "10/10/2025" },
-    { id: "LD-02", name: "Putri Utami Zahara", probability: "85%", age: 35, job: "PNS", status: "Converted", lastContact: "10/10/2025" },
-    { id: "LD-03", name: "Andi Pratama", probability: "60%", age: 23, job: "Freelancer", status: "Failed", lastContact: "09/10/2025" },
-    { id: "LD-04", name: "Budi Santoso", probability: "45%", age: 28, job: "Sales", status: "Contacted", lastContact: "09/10/2025" },
-    { id: "LD-05", name: "Siti Aisyah", probability: "77%", age: 31, job: "PNS", status: "Pending", lastContact: "08/10/2025" },
-    { id: "LD-06", name: "Rizky Hadi", probability: "33%", age: 40, job: "Freelancer", status: "Failed", lastContact: "08/10/2025" },
-    { id: "LD-07", name: "Nanda Prasetyo", probability: "81%", age: 37, job: "Sales", status: "Converted", lastContact: "07/10/2025" },
+    {
+      id: "LD-01",
+      name: "David Fahrreza",
+      age: 42,
+      job: "Wirausaha",
+      domicile: "Semarang",
+      probability: "92%",
+      status: "Pending",
+    },
+    {
+      id: "LD-02",
+      name: "Putri Utami Zahara",
+      age: 35,
+      job: "PNS",
+      domicile: "Solo",
+      probability: "85%",
+      status: "Converted",
+    },
+    {
+      id: "LD-03",
+      name: "Andi Pratama",
+      age: 23,
+      job: "Freelancer",
+      domicile: "Tangerang",
+      probability: "60%",
+      status: "Failed",
+    },
+    {
+      id: "LD-04",
+      name: "Budi Santoso",
+      age: 28,
+      job: "Sales",
+      domicile: "Bekasi",
+      probability: "45%",
+      status: "Contacted",
+    },
+    {
+      id: "LD-05",
+      name: "Siti Aisyah",
+      age: 31,
+      job: "Akuntan",
+      domicile: "Surabaya",
+      probability: "77%",
+      status: "Pending",
+    },
+    {
+      id: "LD-06",
+      name: "Rizky Hadi",
+      age: 40,
+      job: "Freelancer",
+      domicile: "Bandung",
+      probability: "33%",
+      status: "Failed",
+    },
+    {
+      id: "LD-07",
+      name: "Nanda Prasetyo",
+      age: 37,
+      job: "Sales",
+      domicile: "Yogyakarta",
+      probability: "81%",
+      status: "Converted",
+    }
   ]);
 
   const [selectedLead, setSelectedLead] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // ⬇️ Fungsi update status
+  // UPDATE STATUS DARI MODAL
   const handleStatusChange = (newStatus) => {
-    setLeads((prevLeads) =>
-      prevLeads.map((lead) =>
+    setLeads((prev) =>
+      prev.map((lead) =>
         lead.id === selectedLead.id ? { ...lead, status: newStatus } : lead
       )
     );
     setSelectedLead((prev) => ({ ...prev, status: newStatus }));
   };
 
+  // ====================== TABLE COLUMN =======================
   const columns = [
-    { header: "ID Lead", accessor: "id" },
     { header: "Leads", accessor: "name" },
-    { header: "Probability", accessor: "probability" },
     { header: "Age", accessor: "age" },
     { header: "Job", accessor: "job" },
+    { header: "Domicile", accessor: "domicile" },
+    { header: "Probability", accessor: "probability" },
     {
       header: "Status",
       accessor: "status",
       render: (value) => <StatusBadge status={value} />,
     },
-    { header: "Last Contacted", accessor: "lastContact" },
     {
       header: "Action",
       accessor: "action",
       render: (_, row) => (
-        <div className="flex gap-3 text-lg text-gray-600">
+        <div className="flex items-center justify-start pl-1 gap-2">
           <FiEye
+            size={18}
             className="cursor-pointer text-blue-500 hover:text-blue-700"
             onClick={() => {
               setSelectedLead(row);
               setIsModalOpen(true);
             }}
           />
-          <FiTrash2 className="cursor-pointer text-red-500 hover:text-red-700" />
+          <FiTrash2
+            size={18}
+            className="cursor-pointer text-red-500 hover:text-red-700"
+          />
         </div>
       ),
     },
   ];
 
-  // 🔎 Filtering logic
+  // ====================== FILTERING =======================
   const filteredData = leads.filter((item) => {
     const matchesSearch =
-      searchQuery === "" ||
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.id.toLowerCase().includes(searchQuery.toLowerCase());
+      !searchQuery ||
+      item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.id?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesScore =
-      filters.score === "" ||
-      (filters.score === "High" && parseInt(item.probability) >= 80) ||
-      (filters.score === "Medium" && parseInt(item.probability) >= 50 && parseInt(item.probability) < 80) ||
-      (filters.score === "Low" && parseInt(item.probability) < 50);
+    const matchesScoreRange =
+      (filters.score_min === undefined || parseInt(item.probability) >= filters.score_min) &&
+      (filters.score_max === undefined || parseInt(item.probability) <= filters.score_max);
+
 
     const matchesAge =
-      filters.age === "" ||
-      (filters.age === "<25" && item.age < 25) ||
-      (filters.age === "25-40" && item.age >= 25 && item.age <= 40) ||
-      (filters.age === "40+" && item.age > 40);
+      (filters.age_min === undefined || item.age >= filters.age_min) &&
+      (filters.age_max === undefined || item.age <= filters.age_max);
 
-    const matchesStatus =
-      filters.status === "" || item.status === filters.status;
+    const matchesStatus = !filters.status || item.status === filters.status;
 
-    const matchesJob =
-      filters.job === "" || item.job === filters.job;
+    const matchesJob = !filters.job || item.job === filters.job;
 
     return (
       matchesSearch &&
-      matchesScore &&
+      matchesScoreRange &&
       matchesAge &&
       matchesStatus &&
       matchesJob
     );
   });
 
-  // 📄 Pagination logic
+  // ====================== PAGINATION =======================
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+
+  const currentItems = filteredData.slice(indexOfFirst, indexOfLast);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -129,7 +186,7 @@ export default function TableLeadScoring({ searchQuery, filters }) {
       >
         <LeadDetailsModal
           lead={selectedLead}
-          onStatusChange={handleStatusChange} // ⬅️ kirim ke modal
+          onStatusChange={handleStatusChange}
         />
       </Modal>
     </div>

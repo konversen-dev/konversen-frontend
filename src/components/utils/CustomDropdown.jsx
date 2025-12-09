@@ -22,7 +22,7 @@ export default function CustomDropdown({
       {/* Tombol utama */}
       <button
         onClick={() => setOpen(!open)}
-        className={`flex justify-between items-center w-full bg-white text-gray-700 px-4 py-2 rounded-lg border border-gray-300 shadow-sm hover:bg-gray-50 transition-all focus:outline-none ${fontSize}`}
+        className={`flex justify-between items-center w-full bg-white text-gray-700 px-4 py-2 rounded-lg border border-gray-300 shadow-sm hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-primary-light ${fontSize}`}
       >
         <span className="truncate">{selected}</span>
         <FiChevronDown

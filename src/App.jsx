@@ -1,67 +1,49 @@
-// import React from "react";
-// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import "./index.css";
-
-// // Pages
-// import Login from "./pages/Login.jsx";
-
-// // Sales
-// import Dashboard from "./pages/Sales/Dashboard.jsx";
-
-// function App() {
-//   return (
-//     <Router>
-//       <Routes>
-//         {/* Halaman default */}
-//         <Route path="/" element={<Login />} />
-
-//         {/* Sales */}
-//         <Route path="/dashboard" element={<Dashboard />} />
-//       </Routes>
-//     </Router>
-//   );
-// }
-
-// export default App;
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
 
-// Pages
+/* LOGIN */
 import Login from "./pages/Login.jsx";
 
-// Sales
-import Dashboard from "./pages/Sales/Dashboard.jsx";
-import Campaign from "./pages/Sales/Campaign.jsx";
-import Profile from "./pages/Sales/Profile.jsx";
+/* SALES */
+import SalesDashboard from "./pages/Sales/Dashboard.jsx";
+import SalesCampaign from "./pages/Sales/Campaign.jsx";
+import SalesProfile from "./pages/Sales/Profile.jsx";
 
-// Admin
-import AdminDashboard from "./pages/AdminDashboard.jsx";
+/* MANAGER */
+import ManagerDashboard from "./pages/Manager/ManagerDashboard.jsx";
+import ManagerCampaign from "./pages/Manager/ManagerCampaign.jsx";
+import ManagerProfile from "./pages/Manager/Profile.jsx";
 
-//manager
-import ManagerDashboard from "./pages/ManagerDashboard.jsx";
+/* ADMIN */
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
+import AdminProfile from "./pages/Admin/Profile.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Halaman default */}
+
+        {/* LOGIN */}
         <Route path="/" element={<Login />} />
 
-        {/* Sales */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/campaign-sales" element={<Campaign />} />
-        <Route path="/profile" element={<Profile />} />
+        {/* SALES ROUTES */}
+        <Route path="/sales/dashboard" element={<SalesDashboard />} />
+        <Route path="/sales/campaign" element={<SalesCampaign />} />
+        <Route path="/sales/profile" element={<SalesProfile />} />
 
-        {/* Admin */}
-        <Route path="/admin" element={<AdminDashboard />} />
+        {/* MANAGER ROUTES */}
+        <Route path="/manager/dashboard" element={<ManagerDashboard />} />
+        <Route path="/manager/campaign" element={<ManagerCampaign />} />
+        <Route path="/manager/profile" element={<ManagerProfile />} />
 
-        <Route path="/manager" element={<ManagerDashboard />} /> 
+        {/* ADMIN ROUTES */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/profile" element={<AdminProfile />} />
+
       </Routes>
     </Router>
   );
 }
 
 export default App;
-

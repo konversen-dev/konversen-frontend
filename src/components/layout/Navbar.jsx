@@ -5,55 +5,107 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Hapus token atau session user
-    localStorage.removeItem("token");
+  const role = localStorage.getItem("role") || "sales";
 
-    // Arahkan ke halaman login
+  const handleLogout = () => {
+    localStorage.clear();
     navigate("/");
   };
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        
-        {/* Kiri - Logo */}
-        <div className="flex items-center space-x-2">
-          <h1 className="text-primary-light font-bold text-lg font-montserrat">
-            Conversify
-          </h1>
-        </div>
 
-        {/* Tengah - Menu */}
+        {/* LOGO */}
+        <h1 className="text-primary-light font-bold text-lg font-montserrat">
+          Conversify
+        </h1>
+
+        {/* MENU */}
         <div className="flex items-center space-x-8 ml-auto mr-6">
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              `relative pb-1 text-sm font-semibold transition ${
-                isActive
-                  ? "text-gray-700 after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:bg-primary-light"
-                  : "text-gray-700 hover:text-primary-light"
-              }`
-            }
-          >
-            Dashboard
-          </NavLink>
 
-          <NavLink
-            to="/campaign-sales"
-            className={({ isActive }) =>
-              `relative pb-1 text-sm font-semibold transition ${
-                isActive
-                  ? "text-gray-700 after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:bg-primary-light"
-                  : "text-gray-700 hover:text-primary-light"
-              }`
-            }
-          >
-            Campaign
-          </NavLink>
+          {/* SALES MENU */}
+          {role === "sales" && (
+            <>
+              <NavLink
+                to="/sales/dashboard"
+                className={({ isActive }) =>
+                  `relative pb-1 text-sm font-semibold ${
+                    isActive
+                      ? "text-primary-light after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-[50%] after:h-[3px] after:bg-primary-light after:rounded-full"
+                      : "text-gray-700 hover:text-primary-light"
+                  }`
+                }
+              >
+                Dashboard
+              </NavLink>
+
+              <NavLink
+                to="/sales/campaign"
+                className={({ isActive }) =>
+                  `relative pb-1 text-sm font-semibold ${
+                    isActive
+                      ? "text-primary-light after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-[50%] after:h-[3px] after:bg-primary-light after:rounded-full"
+                      : "text-gray-700 hover:text-primary-light"
+                  }`
+                }
+              >
+                Campaign
+              </NavLink>
+            </>
+          )}
+
+          {/* MANAGER MENU */}
+          {role === "manager" && (
+            <>
+              <NavLink
+                to="/manager/dashboard"
+                className={({ isActive }) =>
+                  `relative pb-1 text-sm font-semibold ${
+                    isActive
+                      ? "text-primary-light after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-[50%] after:h-[3px] after:bg-primary-light after:rounded-full"
+                      : "text-gray-700 hover:text-primary-light"
+                  }`
+                }
+              >
+                Dashboard
+              </NavLink>
+
+              <NavLink
+                to="/manager/campaign"
+                className={({ isActive }) =>
+                  `relative pb-1 text-sm font-semibold ${
+                    isActive
+                      ? "text-primary-light after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-[50%] after:h-[3px] after:bg-primary-light after:rounded-full"
+                      : "text-gray-700 hover:text-primary-light"
+                  }`
+                }
+              >
+                Campaign
+              </NavLink>
+            </>
+          )}
+
+          {/* ADMIN MENU */}
+          {role === "admin" && (
+            <>
+              <NavLink
+                to="/admin/dashboard"
+                className={({ isActive }) =>
+                  `relative pb-1 text-sm font-semibold ${
+                    isActive
+                      ? "text-primary-light after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-[50%] after:h-[3px] after:bg-primary-light after:rounded-full"
+                      : "text-gray-700 hover:text-primary-light"
+                  }`
+                }
+              >
+                Dashboard
+              </NavLink>
+            </>
+          )}
         </div>
 
-        {/* Kanan - User Dropdown */}
+        {/* USER MENU DROPDOWN */}
         <div className="relative">
           <div
             onClick={() => setOpen(!open)}
@@ -64,14 +116,15 @@ export default function Navbar() {
 
           {open && (
             <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg border z-50">
+
               <button
                 onClick={() => {
-                  navigate("/profile");
+                  navigate(`/${role}/profile`);
                   setOpen(false);
                 }}
                 className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
-                Profil
+                Profile
               </button>
 
               <button

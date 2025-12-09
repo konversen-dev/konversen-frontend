@@ -7,11 +7,11 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
 
   const userData = {
-    fullname: "Sales Dudi",
-    email: "sales@mail.com",
-    phone: "0833123456",
-    address: "Jl Penjualan 45",
-    role: "Sales",
+    fullname: "Manager Santi",
+    email: "manager@mail.com",
+    phone: "0822334455",
+    address: "Jl Manager Utama",
+    role: "Manager",
     avatarUri: null,
   };
 

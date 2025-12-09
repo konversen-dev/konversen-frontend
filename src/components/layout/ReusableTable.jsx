@@ -2,8 +2,8 @@ import React from "react";
 
 export default function ReusableTable({ columns = [], data = [] }) {
   return (
-    <div className="overflow-x-auto bg-white rounded-xl shadow-sm shadow-gray-300">
-      <table className="min-w-full text-sm text-left border-collapse">
+    <div className="w-full overflow-x-auto bg-white rounded-xl shadow-sm shadow-gray-300">
+      <table className="min-w-full w-full text-sm text-left border-collapse">
         {/* Table Head */}
         <thead className=" text-gray-700 uppercase text-xs">
           <tr>

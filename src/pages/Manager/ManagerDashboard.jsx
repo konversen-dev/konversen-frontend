@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Navbar from "../../components/layout/Navbar.jsx";
+import DashboardContent from "../../components/layout/DashboardContent.jsx";
 import DashboardHeader from "../../components/sales/DashboardHeader.jsx";
 import DashboardSummary from "../../components/sales/DashboardSummary.jsx";
 import SearchFilterBar from "../../components/utils/SearchFilterBar.jsx";
 import TableLeadScoring from "../../components/sales/TableLeadScoring.jsx";
-import DashboardContent from "../../components/layout/DashboardContent.jsx";
 
-export default function Dashboard() {
+export default function ManagerDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     score: "",
@@ -15,52 +15,36 @@ export default function Dashboard() {
     job: "",
   });
 
-  // Dropdown campaign
   const campaignOptions = [
     { label: "Campaign 1", value: "campaign1" },
     { label: "Campaign 2", value: "campaign2" },
   ];
 
-  // Event handler
-  const handleAddLead = () => console.log("Add Lead clicked!");
-  const handleSearchChange = (query) => setSearchQuery(query);
-  const handleFilterChange = (id, value) =>
-    setFilters((prev) => ({ ...prev, [id]: value }));
-
-  // Filter dropdown options
   const filterOptions = [
     { id: "age", minAge: 18, maxAge: 200 },
     { id: "job", placeholder: "All Jobs", options: ["Sales", "PNS", "Freelancer"] },
-    { id: "score", min: 0, max: 100 }, 
+    { id: "score", min: 0, max: 100 },
     { id: "status", placeholder: "All Status", options: ["Pending", "Contacted", "Converted"] },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 font-lato">
-      {/* 🔹 Navbar */}
       <Navbar />
 
-      {/* 🔹 Main Content Wrapper */}
       <DashboardContent>
-        {/* Header */}
-        <DashboardHeader
-          campaignOptions={campaignOptions}
-          onAddLead={handleAddLead}
-        />
+        <DashboardHeader campaignOptions={campaignOptions} />
 
-        {/* Summary Cards */}
         <DashboardSummary />
 
-        {/* Search + Filter Bar */}
         <SearchFilterBar
           filters={filterOptions}
-          onSearchChange={handleSearchChange}
-          onFilterChange={handleFilterChange}
+          onSearchChange={setSearchQuery}
+          onFilterChange={(id, value) =>
+            setFilters((prev) => ({ ...prev, [id]: value }))
+          }
         />
 
-        {/* Table Lead Scoring */}
         <div className="p-4">
-          {/* ⬇️ kirim props ke TableLeadScoring */}
           <TableLeadScoring searchQuery={searchQuery} filters={filters} />
         </div>
       </DashboardContent>

@@ -1,43 +1,44 @@
 import React, { useState, useMemo } from "react";
+
 import Navbar from "../../components/layout/Navbar.jsx";
 import DashboardContent from "../../components/layout/DashboardContent.jsx";
+import SummaryCard from "../../components/layout/SummaryCard.jsx";
 import Pagination from "../../components/utils/Pagination.jsx";
 import Modal from "../../components/utils/Modal.jsx";
-
-// Reusable components (same as manager)
-import CampaignTable from "../../components/campaign/CampaignTable.jsx";
-import CampaignFilterBar from "../../components/campaign/CampaignFilterBar.jsx";
-import CampaignDetailsModal from "../../components/campaign/CampaignDetailModal.jsx";
-
 import CampaignSummary from "../../components/sales/CampaignSummary.jsx";
 
-export default function SalesCampaign() {
+import CampaignFilterBar from "../../components/campaign/CampaignFilterBar.jsx";
 
-  /* --------------- DUMMY CAMPAIGNS (nanti dari BE) --------------- */
-  const [campaigns] = useState([
+// Components
+import CampaignTable from "../../components/campaign/CampaignTable.jsx";
+import CampaignForm from "../../components/campaign/CampaignForm.jsx";
+import CampaignDetailsModal from "../../components/campaign/CampaignDetailModal.jsx";
+
+
+
+
+export default function ManagerCampaign() {
+
+  const [campaigns, setCampaigns] = useState([
     {
       id: "CMP-01",
       name: "Dana Pendidikan Anak",
-      description: "Program keluarga muda area Jabodetabek.",
+      description: "Program edukasi dana pendidikan untuk keluarga muda.",
       targetLead: 150,
       periodStart: "2025-10-10",
       periodEnd: "2025-10-21",
       status: "Active",
       madeBy: "Sarah Wijaya",
-      participants: ["sales01@gmail.com", "sales02@gmail.com"],
-      participate: "Joined",
     },
     {
       id: "CMP-02",
       name: "Promo Kredit Usaha 2025",
-      description: "Kredit usaha kecil bunga spesial.",
+      description: "Akuisisi nasabah kredit usaha kecil.",
       targetLead: 270,
       periodStart: "2025-09-01",
       periodEnd: "2025-09-30",
       status: "Completed",
       madeBy: "Rio Setiawan",
-      participants: ["sales01@gmail.com"],
-      participate: "Joined",
     },
   ]);
 
@@ -51,17 +52,19 @@ export default function SalesCampaign() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [detailData, setDetailData] = useState(null);
 
-  /* ---------------------- SUMMARY ---------------------- */
+  // Summary perhitungan
   const summary = useMemo(() => ({
     totalCampaigns: campaigns.length,
-    totalLeads: campaigns.reduce((a, c) => a + Number(c.targetLead), 0),
+    totalLeads: campaigns.reduce((a, b) => a + Number(b.targetLead), 0),
     active: campaigns.filter((c) => c.status === "Active").length,
     completed: campaigns.filter((c) => c.status === "Completed").length,
   }), [campaigns]);
 
-  /* ---------------------- FILTERING ---------------------- */
+  // FILTERING FUNCTION
   const filtered = campaigns.filter((c) => {
     const matchSearch =
       c.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -69,13 +72,11 @@ export default function SalesCampaign() {
 
     const matchStatus = !filters.status || c.status === filters.status;
 
-    const start = new Date(c.periodStart);
-    const end = new Date(c.periodEnd);
-
     const matchStart =
-      !filters.startDate || start >= new Date(filters.startDate);
+      !filters.startDate || new Date(c.periodStart) >= new Date(filters.startDate);
 
-    const matchEnd = !filters.endDate || end <= new Date(filters.endDate);
+    const matchEnd =
+      !filters.endDate || new Date(c.periodEnd) <= new Date(filters.endDate);
 
     return matchSearch && matchStatus && matchStart && matchEnd;
   });
@@ -84,30 +85,48 @@ export default function SalesCampaign() {
   const startIdx = (page - 1) * perPage;
   const currentData = filtered.slice(startIdx, startIdx + perPage);
 
-  /* ---------------------- RENDER ---------------------- */
+  const saveCampaign = (campaignData) => {
+    if (editing) {
+      setCampaigns((prev) =>
+        prev.map((c) =>
+          c.id === editing.id ? { ...c, ...campaignData } : c
+        )
+      );
+    } else {
+      const nextId = `CMP-${String(campaigns.length + 1).padStart(2, "0")}`;
+      setCampaigns((prev) => [...prev, { ...campaignData, id: nextId }]);
+    }
+    setShowForm(false);
+    setEditing(null);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 font-lato">
-      <Navbar />
 
+      <Navbar />
       <DashboardContent>
 
         {/* HEADER */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-primary-darkest">Campaign</h1>
             <p className="text-sm text-primary-dark">
-              View campaigns assigned to you.
+              Manage & create campaigns to expand your lead reach.
             </p>
           </div>
 
-         
+          <button
+            onClick={() => setShowForm(true)}
+            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg"
+          >
+            + Add Campaign
+          </button>
         </div>
 
-        {/* SUMMARY CARDS */}
+        {/* SUMMARY CARD */}
         <CampaignSummary data={summary} />
 
-        {/* FILTER BAR */}
+        {/* FILTER BAR (INI YANG PENTING!) */}
         <CampaignFilterBar
           search={search}
           setSearch={setSearch}
@@ -119,8 +138,14 @@ export default function SalesCampaign() {
         {/* TABLE */}
         <CampaignTable
           data={currentData}
-          readOnly={true}    // <-- 🔥 penting! hanya show icon view
-          onDetail={(row) => setDetailData(row)}
+          onDetail={setDetailData}
+          onEdit={(row) => {
+            setEditing(row);
+            setShowForm(true);
+          }}
+          onDelete={(row) =>
+            setCampaigns((prev) => prev.filter((c) => c.id !== row.id))
+          }
         />
 
         <Pagination
@@ -133,13 +158,25 @@ export default function SalesCampaign() {
 
       </DashboardContent>
 
+      {/* MODAL ADD / EDIT */}
+      <Modal isOpen={showForm} onClose={() => setShowForm(false)}>
+        <CampaignForm
+          mode={editing ? "edit" : "add"}
+          initialData={editing}
+          onSave={saveCampaign}
+          onCancel={() => {
+            setShowForm(false);
+            setEditing(null);
+          }}
+        />
+      </Modal>
+
       {/* MODAL DETAIL */}
       <Modal isOpen={!!detailData} onClose={() => setDetailData(null)}>
         {detailData && (
           <CampaignDetailsModal
             campaign={detailData}
             onClose={() => setDetailData(null)}
-            readOnly
           />
         )}
       </Modal>

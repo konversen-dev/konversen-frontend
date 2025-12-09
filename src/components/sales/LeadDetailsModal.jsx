@@ -77,7 +77,8 @@ export default function LeadDetailsModal({ lead, onStatusChange }) {
           <DetailItem label="Phone Number" value={lead.phone} />
           <DetailItem label="Age" value={lead.age} />
           <DetailItem label="Job" value={lead.job} />
-          <DetailItem label="City" value={lead.city} />
+          <DetailItem label="Education" value={lead.education} />
+          <DetailItem label="Domicile" value={lead.domicile} />
         </div>
 
         <hr className="my-4" />
@@ -102,7 +103,14 @@ export default function LeadDetailsModal({ lead, onStatusChange }) {
             <StatusBadge status={lead.status} />
           </div>
 
-          <DetailItem label="Last Contacted Date" value={lead.lastContact} />
+          <DetailItem label="Cluster" value={lead.cluster} />
+
+          {/* DESKRIPSI CLUSTER TANPA LABEL */}
+          {lead.clusterDescription && (
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {lead.clusterDescription}
+            </p>
+          )}
         </div>
       </div>
 
@@ -115,7 +123,7 @@ export default function LeadDetailsModal({ lead, onStatusChange }) {
         </h2>
 
         {/* LOG LIST */}
-        <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
+        <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
           {logs.map((item, index) => (
             <LogCard
               key={index}

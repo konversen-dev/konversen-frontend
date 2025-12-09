@@ -5,26 +5,31 @@ import loginIllustration from "../assets/sales/login-illustration.png";
 export default function Login() {
   const navigate = useNavigate();
 
-  // const handleLogin = (e) => {
-  //   e.preventDefault();
-  //   // (nanti bisa tambahkan logika auth di sini)
-  //   navigate("/dashboard");
-  // };
-
   const handleLogin = (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
 
-    if (email.toLowerCase().includes("admin")) {
-      navigate("/admin");
-    } else if (email.toLowerCase().includes("manager")) {
-      navigate("/manager");
+    const email = e.target.email.value.toLowerCase();
+
+    let role = "sales";
+
+    if (email.includes("admin")) {
+      role = "admin";
+    } else if (email.includes("manager")) {
+      role = "manager";
+    }
+
+    // SIMPAN ROLE
+    localStorage.setItem("role", role);
+
+    // Redirect sesuai role yang benar-benar ada di App.jsx
+    if (role === "admin") {
+      navigate("/admin/dashboard");
+    } else if (role === "manager") {
+      navigate("/manager/dashboard");
     } else {
-      navigate("/dashboard");
+      navigate("/sales/dashboard");
     }
   };
-
-
 
   return (
     <div className="flex h-screen font-lato">
@@ -44,7 +49,7 @@ export default function Login() {
               <input
                 type="email"
                 id="email"
-                name="email" //ini tambahan
+                name="email"
                 placeholder="Your Email"
                 className="w-full border text-sm border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-light"
               />
