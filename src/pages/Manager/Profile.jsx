@@ -1,3 +1,4 @@
+// src/pages/Profile/Profile.jsx
 import Navbar from "../../components/layout/Navbar";
 import ProfileForm from "../../components/profile/ProfileForm";
 import Footer from "../../components/layout/Footer";
@@ -13,9 +14,11 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const response = await profileService.getProfile();
-        setUserData(response.data);
+        // prefer response.data if backend wraps user in data
+        setUserData(response.data || null);
       } catch (error) {
         console.error("Failed to fetch profile:", error);
+        setUserData(null);
       } finally {
         setLoading(false);
       }
@@ -27,11 +30,14 @@ export default function Profile() {
   // SAVE PROFILE
   const handleSave = async (updated) => {
     try {
-      await profileService.updateProfile(updated);
-      setUserData(updated);
-      return true;
+      // expect backend returns the updated user in response.data
+      const response = await profileService.updateProfile(updated);
+      const saved = response?.data ?? updated;
+      setUserData(saved);
+      return saved; // return saved user for caller if needed
     } catch (error) {
       console.error("Failed to update profile:", error);
+      // rethrow so ProfileForm can handle/display inline error
       throw error;
     }
   };
@@ -48,14 +54,29 @@ export default function Profile() {
     );
   }
 
+  if (!userData) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex flex-col items-center py-20 gap-4">
+          <p className="text-gray-600">No profile data available.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Retry
+          </button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="flex justify-center py-10">
-        <ProfileForm
-          user={userData}
-          onSave={handleSave}
-        />
+        <ProfileForm user={userData} onSave={handleSave} />
       </div>
       <Footer />
     </div>

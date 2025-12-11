@@ -1,15 +1,20 @@
-// src/components/campaign/CampaignForm.jsx
 import React, { useState } from "react";
 import { FiCalendar } from "react-icons/fi";
 
-export default function CampaignForm({ mode, initialData, onSave, onCancel }) {
+export default function CampaignForm({
+  mode,
+  initialData,
+  onSave,
+  onCancel,
+  errorMessage, // <-- menerima error dari parent
+}) {
   const [form, setForm] = useState({
     name: initialData?.name || "",
     description: initialData?.description || "",
     targetLeads: initialData?.target_leads || "",
     status: initialData?.status || "Active",
-    startDate: initialData?.start_date?.split('T')[0] || "",
-    endDate: initialData?.end_date?.split('T')[0] || "",
+    startDate: initialData?.start_date?.split?.("T")?.[0] || "",
+    endDate: initialData?.end_date?.split?.("T")?.[0] || "",
     inviteEmail: "",
     collaboratorEmails: initialData?.collaborators || [],
   });
@@ -37,18 +42,17 @@ export default function CampaignForm({ mode, initialData, onSave, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Transform data to match API format
+
     const apiData = {
       name: form.name,
       description: form.description,
       targetLeads: Number(form.targetLeads),
       status: form.status,
-      startDate: new Date(form.startDate).toISOString(),
-      endDate: new Date(form.endDate).toISOString(),
+      startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
+      endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
       collaboratorEmails: form.collaboratorEmails,
     };
-    
+
     onSave(apiData);
   };
 
@@ -62,6 +66,13 @@ export default function CampaignForm({ mode, initialData, onSave, onCancel }) {
         </h2>
         <div className="w-6" />
       </div>
+
+      {/* INLINE ERROR ABOVE FORM */}
+      {errorMessage && (
+        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700">
+          {errorMessage}
+        </div>
+      )}
 
       {/* Campaign Name */}
       <div>
@@ -119,7 +130,6 @@ export default function CampaignForm({ mode, initialData, onSave, onCancel }) {
       <div>
         <label className="text-sm font-semibold">Periode :</label>
         <div className="flex items-center gap-3 mt-1">
-
           {/* Start Date */}
           <div className="relative flex-1">
             <FiCalendar className="absolute left-2 top-3 text-gray-400" />

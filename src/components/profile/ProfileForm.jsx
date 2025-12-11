@@ -1,3 +1,4 @@
+// src/components/profile/ProfileForm.jsx
 import React, { useState, useEffect } from "react";
 import ChangePasswordModal from "./ChangePasswordModal";
 import { uploadService } from "../../services/uploadService";
@@ -15,14 +16,17 @@ export default function ProfileForm({ user, onSave }) {
   const [preview, setPreview] = useState(form.avatar_url || form.avatarUri || null);
   const [selectedFile, setSelectedFile] = useState(null);
 
-  // Alert modal state
+  // INLINE form error (tampil di atas form)
+  const [formError, setFormError] = useState("");
+
+  // Alert modal state (keep for success messages)
   const [alertState, setAlertState] = useState({
     isOpen: false,
     title: "",
     message: "",
   });
 
-  const showAlert = (title = "Info", message = "") => {
+  const showSuccess = (title = "Info", message = "") => {
     setAlertState({ isOpen: true, title, message });
   };
 
@@ -33,7 +37,7 @@ export default function ProfileForm({ user, onSave }) {
   // Generate initials from user's fullname
   const initials = (form.fullname || "User")
     .split(" ")
-    .map((n) => n[0])
+    .map((n) => n[0] || "")
     .join("")
     .slice(0, 2)
     .toUpperCase();
@@ -43,45 +47,53 @@ export default function ProfileForm({ user, onSave }) {
     if (user) {
       setForm({ ...user });
       setPreview(user.avatar_url || user.avatarUri || null);
+      setFormError("");
+      setSelectedFile(null);
     }
   }, [user]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    // clear form error when user types
+    if (formError) setFormError("");
   };
 
   // === HANDLE UPLOAD FOTO ===
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
+
+    // Reset previous errors
+    setFormError("");
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      showAlert("File Too Large", "File size must be less than 5 MB.");
+      setFormError("File size must be less than 5 MB.");
       return;
     }
 
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      showAlert("Invalid File Type", "Only JPG, PNG, GIF, and WEBP images are allowed.");
+      setFormError("Only JPG, PNG, GIF, and WEBP images are allowed.");
       return;
     }
 
-    // Show preview
+    // Show preview (local)
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result);
     };
     reader.readAsDataURL(file);
 
-    // Save file for upload later
+    // Save file for upload when saving profile
     setSelectedFile(file);
   };
 
   const handleSave = async () => {
     setSaving(true);
     setUploading(false);
+    setFormError(""); // clear previous errors
 
     try {
       // Upload avatar first if there's a new file
@@ -97,16 +109,25 @@ export default function ProfileForm({ user, onSave }) {
           setUploading(false);
         } catch (uploadError) {
           setUploading(false);
-          // show friendly error
+          // prefer backend message if ada
           const msg =
             uploadError?.response?.data?.message ||
             uploadError?.message ||
             "Avatar upload failed. Please try again.";
+          // tampilkan sebagai inline error
+          setFormError(msg);
+          // rethrow hanya untuk memastikan flow berhenti di sini
           throw new Error(msg);
         }
       }
 
-      // Update profile via parent onSave handler
+      // Basic client-side validation: fullname required
+      if (!form.fullname || form.fullname.trim() === "") {
+        setFormError("Full name is required.");
+        throw new Error("Full name is required.");
+      }
+
+      // Update profile via parent onSave handler (parent bisa memanggil API)
       await onSave(form);
 
       // Update AuthContext so navbar reflects changes immediately
@@ -116,14 +137,17 @@ export default function ProfileForm({ user, onSave }) {
       });
 
       setIsEditing(false);
-
-      showAlert("Success", "Profile updated successfully.");
+      setFormError("");
+      showSuccess("Success", "Profile updated successfully.");
     } catch (error) {
-      const friendly =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Failed to update profile. Please try again.";
-      showAlert("Update Failed", friendly);
+      // If formError already set, keep it. Otherwise set friendly message.
+      if (!formError) {
+        const friendly =
+          error?.response?.data?.message ||
+          error?.message ||
+          "Failed to update profile. Please try again.";
+        setFormError(friendly);
+      }
     } finally {
       setSaving(false);
       setUploading(false);
@@ -133,6 +157,7 @@ export default function ProfileForm({ user, onSave }) {
   return (
     <>
       <div className="bg-white shadow-lg p-8 rounded-xl w-[420px]">
+
         {/* AVATAR + UPLOAD */}
         <div className="w-full flex flex-col items-center mb-6">
           {preview ? (
@@ -160,13 +185,20 @@ export default function ProfileForm({ user, onSave }) {
           )}
         </div>
 
+        {/* INLINE ERROR BANNER */}
+        {formError && (
+          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700">
+            {formError}
+          </div>
+        )}
+
         {/* FORM FIELDS */}
         <div className="space-y-4">
           <div>
             <label className="text-sm font-semibold">Full Name</label>
             <input
               name="fullname"
-              value={form.fullname}
+              value={form.fullname || ""}
               disabled={!isEditing}
               onChange={handleChange}
               className={`w-full border px-3 py-2 rounded ${
@@ -179,7 +211,7 @@ export default function ProfileForm({ user, onSave }) {
             <label className="text-sm font-semibold">Email</label>
             <input
               name="email"
-              value={form.email}
+              value={form.email || ""}
               disabled
               className="w-full border px-3 py-2 rounded bg-gray-100"
             />
@@ -189,7 +221,7 @@ export default function ProfileForm({ user, onSave }) {
             <label className="text-sm font-semibold">Phone</label>
             <input
               name="phone"
-              value={form.phone}
+              value={form.phone || ""}
               disabled={!isEditing}
               onChange={handleChange}
               className={`w-full border px-3 py-2 rounded ${
@@ -202,7 +234,7 @@ export default function ProfileForm({ user, onSave }) {
             <label className="text-sm font-semibold">Address</label>
             <textarea
               name="address"
-              value={form.address}
+              value={form.address || ""}
               disabled={!isEditing}
               onChange={handleChange}
               className={`w-full border px-3 py-2 rounded ${
@@ -214,7 +246,7 @@ export default function ProfileForm({ user, onSave }) {
           <div>
             <label className="text-sm font-semibold">Role</label>
             <input
-              value={form.role}
+              value={form.role || ""}
               disabled
               className="w-full border px-3 py-2 rounded bg-gray-200"
             />
@@ -225,7 +257,10 @@ export default function ProfileForm({ user, onSave }) {
         <div className="flex justify-between mt-6">
           {!isEditing ? (
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={() => {
+                setIsEditing(true);
+                setFormError("");
+              }}
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Edit Profile
@@ -253,7 +288,7 @@ export default function ProfileForm({ user, onSave }) {
         )}
       </div>
 
-      {/* ALERT MODAL */}
+      {/* SUCCESS ALERT MODAL */}
       <AlertModal
         isOpen={alertState.isOpen}
         title={alertState.title}

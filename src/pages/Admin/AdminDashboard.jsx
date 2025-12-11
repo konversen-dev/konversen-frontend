@@ -1,3 +1,4 @@
+// src/pages/Admin/AdminDashboard.jsx
 import React, { useState, useMemo, useEffect } from "react";
 
 // Layout & UI
@@ -71,6 +72,10 @@ export default function AdminDashboard() {
     setAlertState({ isOpen: false, title: "", message: "" });
   };
 
+  // Inline form error state passed into Add/Edit forms
+  // can be a string (general) or object (field-level)
+  const [formError, setFormError] = useState("");
+
   /* ===============================
       FETCH DATA
   =============================== */
@@ -90,9 +95,25 @@ export default function AdminDashboard() {
 
       const response = await userService.getAllUsers(params);
 
-      if (response.status === "success") {
-        setAccounts(response.data.users);
-        setTotalItems(response.data.pagination.totalItems);
+      // Support different response shapes: prefer response.data when wrapped
+      const payload = response?.data ?? response;
+      // If your service returns { status: 'success', data: { users, pagination } }
+      if (payload?.users) {
+        setAccounts(payload.users);
+        setTotalItems(payload.pagination?.totalItems ?? totalItems);
+      } else if (response?.status === "success" && response.data) {
+        setAccounts(response.data.users || []);
+        setTotalItems(response.data.pagination?.totalItems || 0);
+      } else {
+        // fallback if API returns plain array
+        if (Array.isArray(response)) {
+          setAccounts(response);
+          setTotalItems(response.length);
+        } else {
+          // unknown shape
+          setAccounts([]);
+          setTotalItems(0);
+        }
       }
     } catch (err) {
       setError(err.message || "Failed to fetch users");
@@ -105,9 +126,8 @@ export default function AdminDashboard() {
   const fetchStats = async () => {
     try {
       const response = await userService.getUserStats();
-      if (response.status === "success") {
-        setStats(response.data);
-      }
+      const payload = response?.data ?? response;
+      if (payload) setStats(payload);
     } catch (err) {
       console.error("Fetch stats error:", err);
     }
@@ -137,9 +157,8 @@ export default function AdminDashboard() {
       try {
         setLoadingDetail(true);
         const response = await userService.getUserById(acc.id);
-        if (response.status === "success") {
-          setDetailAccount(response.data);
-        }
+        const payload = response?.data ?? response;
+        setDetailAccount(payload);
       } catch (err) {
         console.error("Failed to fetch user details:", err);
         setDetailAccount(acc);
@@ -151,14 +170,14 @@ export default function AdminDashboard() {
     onEdit: async (acc) => {
       try {
         const response = await userService.getUserById(acc.id);
-        if (response.status === "success") {
-          setEditingAccount(response.data);
-        } else {
-          setEditingAccount(acc);
-        }
+        const payload = response?.data ?? response;
+        setEditingAccount(payload);
       } catch (err) {
         console.error("Failed to fetch user details:", err);
         setEditingAccount(acc);
+      } finally {
+        // clear any previous form errors when opening edit
+        setFormError("");
       }
     },
 
@@ -176,22 +195,68 @@ export default function AdminDashboard() {
     setCurrentPage(1);
   };
 
+  // Create user — show inline errors on form when validation fails
   const handleAddAccount = async (newAcc) => {
     try {
       setLoading(true);
-      const response = await userService.createUser(newAcc);
+      setFormError("");
 
-      if (response.status === "success") {
+      const response = await userService.createUser(newAcc);
+      const payload = response?.data ?? response;
+
+      if (response?.status === "success" || payload?.success || payload?.created) {
         setIsAddOpen(false);
         fetchUsers();
         fetchStats();
         showAlert("Success", "User created successfully!");
       } else {
-        // in case backend returns error state
-        showAlert("Error", response.message || "Failed to create user");
+        // Backend returned a non-success shape — try to read message/errors
+        const msg =
+          payload?.message ||
+          payload?.errors ||
+          response?.message ||
+          "Failed to create user";
+        // If errors is object, set directly so form can render field-level messages
+        setFormError(typeof msg === "object" ? msg : String(msg));
       }
     } catch (err) {
-      showAlert("Failed To Create User", (err.message || ""));
+      // Prefer structured API errors
+      const apiMsg =
+        err?.response?.data?.message ?? err?.response?.data?.errors ?? err.message;
+      setFormError(apiMsg || "Failed to create user");
+      console.error("Create user error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Edit user — similar pattern, returns boolean success to caller if needed
+  const handleEditAccountSave = async (updated) => {
+    if (!editingAccount) return;
+    try {
+      setLoading(true);
+      setFormError("");
+      const response = await userService.updateUser(editingAccount.id, updated);
+      const payload = response?.data ?? response;
+
+      if (response?.status === "success" || payload?.success) {
+        setEditingAccount(null);
+        fetchUsers();
+        fetchStats();
+        showAlert("Success", "User updated successfully!");
+        return true;
+      } else {
+        const msg =
+          payload?.message || payload?.errors || response?.message || "Failed to update user";
+        setFormError(typeof msg === "object" ? msg : String(msg));
+        return false;
+      }
+    } catch (err) {
+      const apiMsg =
+        err?.response?.data?.message ?? err?.response?.data?.errors ?? err.message;
+      setFormError(apiMsg || "Failed to update user");
+      console.error("Update user error:", err);
+      return false;
     } finally {
       setLoading(false);
     }
@@ -213,7 +278,10 @@ export default function AdminDashboard() {
             </div>
 
             <button
-              onClick={() => setIsAddOpen(true)}
+              onClick={() => {
+                setIsAddOpen(true);
+                setFormError("");
+              }}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg"
             >
               Add Account
@@ -278,10 +346,20 @@ export default function AdminDashboard() {
       </div>
 
       {/* MODAL ADD ACCOUNT */}
-      <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)}>
+      <Modal
+        isOpen={isAddOpen}
+        onClose={() => {
+          setIsAddOpen(false);
+          setFormError("");
+        }}
+      >
         <AddAccountForm
           onSave={handleAddAccount}
-          onCancel={() => setIsAddOpen(false)}
+          onCancel={() => {
+            setIsAddOpen(false);
+            setFormError("");
+          }}
+          errorMessage={formError} // inline error passed to form
         />
       </Modal>
 
@@ -300,21 +378,24 @@ export default function AdminDashboard() {
       </Modal>
 
       {/* MODAL EDIT ACCOUNT */}
-      <Modal isOpen={!!editingAccount} onClose={() => setEditingAccount(null)}>
+      <Modal
+        isOpen={!!editingAccount}
+        onClose={() => {
+          setEditingAccount(null);
+          setFormError("");
+        }}
+      >
         <EditAccountForm
           account={editingAccount}
-          onCancel={() => setEditingAccount(null)}
-          onSave={async (updated) => {
-            try {
-              await userService.updateUser(editingAccount.id, updated);
-              setEditingAccount(null);
-              fetchUsers();
-              fetchStats();
-              showAlert("Success", "User updated successfully!");
-            } catch (err) {
-              showAlert("Failed To Update User", (err.message || ""));
-            }
+          onCancel={() => {
+            setEditingAccount(null);
+            setFormError("");
           }}
+          onSave={async (updated) => {
+            // delegate to handler which sets formError when necessary
+            await handleEditAccountSave(updated);
+          }}
+          errorMessage={formError}
         />
       </Modal>
 

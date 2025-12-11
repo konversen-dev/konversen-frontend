@@ -1,3 +1,4 @@
+// src/pages/Manager/ManagerCampaign.jsx
 import React, { useState, useMemo, useEffect } from "react";
 
 import Navbar from "../../components/layout/Navbar.jsx";
@@ -45,13 +46,16 @@ export default function ManagerCampaign() {
   const [editing, setEditing] = useState(null);
   const [detailData, setDetailData] = useState(null);
 
+  // inline form error state (will be passed into CampaignForm)
+  const [formError, setFormError] = useState("");
+
   // Confirm delete modal state
   const [confirmDelete, setConfirmDelete] = useState({
     isOpen: false,
     campaign: null,
   });
 
-  // Alert modal state
+  // Alert modal state (keep for other non-form alerts)
   const [alertState, setAlertState] = useState({
     isOpen: false,
     title: "",
@@ -132,6 +136,9 @@ export default function ManagerCampaign() {
 
   const saveCampaign = async (campaignData) => {
     try {
+      // clear previous form error before attempt
+      setFormError("");
+
       if (editing) {
         // Update campaign
         await campaignService.updateCampaign(editing.id, campaignData);
@@ -142,14 +149,36 @@ export default function ManagerCampaign() {
         showAlert("Success", "Campaign created successfully!");
       }
 
+      // success → close form + reset
       setShowForm(false);
       setEditing(null);
+      setFormError("");
       fetchCampaigns();
       fetchStats();
     } catch (error) {
+      // prefer API message if available
       const msg =
-        error?.response?.data?.message || "Failed to save campaign. Please try again.";
-      showAlert("Save Failed", msg);
+        error?.response?.data?.message ||
+        // if backend returns field errors, stringify them sensibly
+        (error?.response?.data?.errors
+          ? formatFieldErrors(error.response.data.errors)
+          : "Failed to save campaign. Please try again.");
+
+      // tampilkan inline di form (modal tetap terbuka)
+      setFormError(msg);
+    }
+  };
+
+  // helper to convert errors object to string (field-level to readable single string)
+  const formatFieldErrors = (errorsObj) => {
+    try {
+      if (typeof errorsObj === "string") return errorsObj;
+      // errorsObj like { name: "required", email: "invalid" }
+      return Object.entries(errorsObj)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(" • ");
+    } catch (e) {
+      return "Validation error";
     }
   };
 
@@ -194,7 +223,11 @@ export default function ManagerCampaign() {
           </div>
 
           <button
-            onClick={() => setShowForm(true)}
+            onClick={() => {
+              setShowForm(true);
+              setEditing(null);
+              setFormError("");
+            }}
             className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg"
           >
             + Add Campaign
@@ -220,7 +253,11 @@ export default function ManagerCampaign() {
           <div className="bg-white rounded-xl shadow-sm p-8 text-center">
             <p className="text-gray-500 mb-4">No campaigns found.</p>
             <button
-              onClick={() => setShowForm(true)}
+              onClick={() => {
+                setShowForm(true);
+                setEditing(null);
+                setFormError("");
+              }}
               className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg"
             >
               Create Your First Campaign
@@ -237,6 +274,7 @@ export default function ManagerCampaign() {
               const fullData = await fetchCampaignDetail(row.id);
               if (fullData) {
                 setEditing(fullData);
+                setFormError("");
                 setShowForm(true);
               }
             }}
@@ -254,25 +292,35 @@ export default function ManagerCampaign() {
       </DashboardContent>
 
       {/* MODAL ADD / EDIT */}
-      <Modal isOpen={showForm} onClose={() => setShowForm(false)}>
+      <Modal
+        isOpen={showForm}
+        onClose={() => {
+          setShowForm(false);
+          setEditing(null);
+          setFormError("");
+        }}
+      >
         <CampaignForm
           mode={editing ? "edit" : "add"}
           initialData={editing}
-          onSave={saveCampaign}
+          onSave={async (data) => {
+            // clear previous error, then attempt save
+            setFormError("");
+            await saveCampaign(data);
+          }}
           onCancel={() => {
             setShowForm(false);
             setEditing(null);
+            setFormError("");
           }}
+          errorMessage={formError} // <-- kirim error ke form (inline)
         />
       </Modal>
 
       {/* MODAL DETAIL */}
       <Modal isOpen={!!detailData} onClose={() => setDetailData(null)}>
         {detailData && (
-          <CampaignDetailsModal
-            campaign={detailData}
-            onClose={() => setDetailData(null)}
-          />
+          <CampaignDetailsModal campaign={detailData} onClose={() => setDetailData(null)} />
         )}
       </Modal>
 

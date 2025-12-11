@@ -1,3 +1,4 @@
+// src/components/profile/ChangePasswordModal.jsx
 import React, { useState } from "react";
 import { profileService } from "../../services/profileService";
 import AlertModal from "../../components/utils/AlertModal";
@@ -8,56 +9,60 @@ export default function ChangePasswordModal({ onClose }) {
   const [confirmPass, setConfirmPass] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Alert modal state
+  // INLINE form error (tampil di atas form)
+  const [formError, setFormError] = useState("");
+
+  // Alert modal state (keep for success)
   const [alertState, setAlertState] = useState({
     isOpen: false,
     title: "",
     message: "",
   });
 
-  const showAlert = (title, message) => {
+  const showSuccess = (title, message) => {
     setAlertState({ isOpen: true, title, message });
   };
 
   const closeAlert = () => {
     setAlertState({ isOpen: false, title: "", message: "" });
+    // close modal after success alert closed
+    onClose?.();
   };
 
   const handleSubmit = async () => {
-    if (newPass !== confirmPass) {
-      showAlert("Password Mismatch", "Password confirmation does not match.");
+    // clear previous inline error
+    setFormError("");
+
+    // client-side validations
+    if (!oldPass || !newPass || !confirmPass) {
+      setFormError("Please fill in all required fields.");
       return;
     }
 
-    if (!oldPass || !newPass) {
-      showAlert("Missing Fields", "Please fill in all required fields.");
+    if (newPass !== confirmPass) {
+      setFormError("Password confirmation does not match.");
       return;
     }
 
     if (newPass.length < 6) {
-      showAlert(
-        "Weak Password",
-        "New password must be at least 6 characters long."
-      );
+      setFormError("New password must be at least 6 characters long.");
       return;
     }
 
     setLoading(true);
     try {
+      // call API (assumes profileService.changePassword returns a promise)
       await profileService.changePassword(oldPass, newPass, confirmPass);
 
-      showAlert("Success", "Your password has been changed successfully.");
-
-      // Close modal AFTER alert closed
-      setTimeout(() => {
-        onClose();
-      }, 500);
+      // show success alert (user will close it -> close modal in closeAlert)
+      showSuccess("Success", "Your password has been changed successfully.");
     } catch (error) {
-      showAlert(
-        "Failed to Change Password",
+      // prefer API message if available
+      const msg =
         error?.response?.data?.message ||
-          "Unable to change password. Please try again."
-      );
+        error?.message ||
+        "Unable to change password. Please try again.";
+      setFormError(msg);
     } finally {
       setLoading(false);
     }
@@ -66,15 +71,25 @@ export default function ChangePasswordModal({ onClose }) {
   return (
     <>
       {/* MAIN MODAL */}
-      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
         <div className="bg-white p-6 rounded-xl w-[400px] shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Change Password</h2>
+
+          {/* INLINE ERROR */}
+          {formError && (
+            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700">
+              {formError}
+            </div>
+          )}
 
           <label className="text-sm font-semibold">Old Password</label>
           <input
             type="password"
             value={oldPass}
-            onChange={(e) => setOldPass(e.target.value)}
+            onChange={(e) => {
+              setOldPass(e.target.value);
+              if (formError) setFormError("");
+            }}
             className="w-full border rounded-lg p-2 mb-3"
           />
 
@@ -82,7 +97,10 @@ export default function ChangePasswordModal({ onClose }) {
           <input
             type="password"
             value={newPass}
-            onChange={(e) => setNewPass(e.target.value)}
+            onChange={(e) => {
+              setNewPass(e.target.value);
+              if (formError) setFormError("");
+            }}
             className="w-full border rounded-lg p-2 mb-3"
           />
 
@@ -90,18 +108,29 @@ export default function ChangePasswordModal({ onClose }) {
           <input
             type="password"
             value={confirmPass}
-            onChange={(e) => setConfirmPass(e.target.value)}
+            onChange={(e) => {
+              setConfirmPass(e.target.value);
+              if (formError) setFormError("");
+            }}
             className="w-full border rounded-lg p-2 mb-5"
           />
 
           <div className="flex justify-between">
             <button
-              onClick={onClose}
+              onClick={() => {
+                // reset local state before close
+                setFormError("");
+                setOldPass("");
+                setNewPass("");
+                setConfirmPass("");
+                onClose?.();
+              }}
               disabled={loading}
               className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 disabled:bg-gray-300"
             >
               Cancel
             </button>
+
             <button
               onClick={handleSubmit}
               disabled={loading}
@@ -113,7 +142,7 @@ export default function ChangePasswordModal({ onClose }) {
         </div>
       </div>
 
-      {/* ALERT MODAL */}
+      {/* SUCCESS ALERT MODAL */}
       <AlertModal
         isOpen={alertState.isOpen}
         title={alertState.title}
