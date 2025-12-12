@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Table from "../layout/ReusableTable.jsx";
 import { FiEye } from "react-icons/fi";
 import StatusBadge from "../utils/StatusBadge.jsx";
+import ProbabilityBadge from "../utils/ProbabilityBadge.jsx";
 import Modal from "../utils/Modal.jsx";
 import LeadDetailsModal from "./LeadDetailsModal.jsx";
 import Pagination from "../utils/Pagination.jsx";
@@ -102,7 +103,7 @@ export default function TableLeadScoring({ searchQuery, filters, campaignId }) {
     { 
       header: "Probability", 
       accessor: "score",
-      render: (v) => typeof v === 'number' ? `${v}%` : v
+      render: (v) => <ProbabilityBadge score={v} />
     },
     {
       header: "Status",

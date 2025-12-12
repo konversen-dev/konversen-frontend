@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import StatusBadge from "../utils/StatusBadge";
+import ProbabilityBadge from "../utils/ProbabilityBadge";
 import CustomDropdown from "../utils/CustomDropdown";
 import noteService from "../../services/noteService.js";
 
@@ -125,9 +126,12 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
         </h3>
 
         <div className="space-y-3 text-sm text-primary-darkest">
-          <DetailItem label="Probability" value={`${lead.score}%`} />
+          <DetailItem 
+            label="Probability" 
+            value={<ProbabilityBadge score={lead.score} showText={true} />} 
+          />
 
-                    <DetailItem label="Cluster" value={lead.cluster} />
+          <DetailItem label="Cluster" value={lead.cluster} />
 
           {/* DESKRIPSI CLUSTER TANPA LABEL */}
           {clusterDescription && (
@@ -216,8 +220,8 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
 ============================== */
 function DetailItem({ label, value }) {
   return (
-    <p>
-      <span className="font-semibold">{label}:</span>{" "}
+    <p className="flex items-center gap-2">
+      <span className="font-semibold">{label}:</span>
       <span className="text-gray-700">{value}</span>
     </p>
   );

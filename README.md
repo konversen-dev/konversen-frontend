@@ -166,10 +166,10 @@ API_URL=http://localhost:your-backend-port
 ## 🎯 Feature Details
 
 ### Lead Scoring
-- Automatically calculate probability based on ML model
+- Receive probability scores processed by the ML model
 - Visual indicator with colors:
-  - High (> 70%): Green
-  - Medium (40-70%): Yellow
+  - High (>= 80%): Green
+  - Medium (40-79%): Yellow
   - Low (< 40%): Red
 
 ### Campaign Management
