@@ -1,14 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import loginIllustration from "../assets/sales/login-illustration.png";
 import konversenLogo from "../assets/logo/konversenLogo.png";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Redirect jika sudah login
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === 'Admin') {
+        navigate('/admin/dashboard');
+      } else if (user.role === 'Manager') {
+        navigate('/manager/dashboard');
+      } else if (user.role === 'Sales') {
+        navigate('/sales/dashboard');
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

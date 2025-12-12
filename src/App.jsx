@@ -25,6 +25,9 @@ import ManagerProfile from "./pages/Manager/Profile.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import AdminProfile from "./pages/Admin/Profile.jsx";
 
+/* NOT FOUND */
+import NotFound from "./pages/NotFound.jsx";
+
 function App() {
   return (
     <Router>
@@ -103,6 +106,9 @@ function App() {
               </ProtectedRoute>
             } 
           />
+
+          {/* 404 NOT FOUND - catch all routes */}
+          <Route path="*" element={<NotFound />} />
 
         </Routes>
       </AuthProvider>

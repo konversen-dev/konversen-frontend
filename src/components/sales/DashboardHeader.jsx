@@ -16,14 +16,17 @@ export default function DashboardHeader({
           Lead Scoring Dashboard
         </h1>
         <p className="text-sm text-gray-500 mt-1 leading-relaxed">
-          Prioritize your potential customers effectively.
+          {campaignOptions.length === 0 
+            ? "No campaigns available. Please create a campaign first."
+            : "Prioritize your potential customers effectively."
+          }
         </p>
       </div>
 
       {/* RIGHT */}
       <div className="flex items-center pt-1 shrink-0">
         <Button 
-          text="Akhir Tahun Aman 2025"
+          text="Select Campaign"
           variant="dropdown"
           options={campaignOptions}
           value={selectedCampaign}

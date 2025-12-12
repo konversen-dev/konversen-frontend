@@ -138,7 +138,11 @@ export default function TableLeadScoring({ searchQuery, filters, campaignId }) {
 
   return (
     <div>
-      {loading ? (
+      {!campaignId ? (
+        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+          <p className="text-gray-500">Please select a campaign to view leads.</p>
+        </div>
+      ) : loading ? (
         <div className="text-center py-8">Loading leads...</div>
       ) : leads.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm p-8 text-center">
@@ -148,16 +152,18 @@ export default function TableLeadScoring({ searchQuery, filters, campaignId }) {
         <Table columns={columns} data={leads} />
       )}
 
-      <Pagination
-        currentPage={currentPage}
-        totalItems={totalItems}
-        itemsPerPage={itemsPerPage}
-        onPageChange={setCurrentPage}
-        onItemsPerPageChange={(value) => {
-          setItemsPerPage(value);
-          setCurrentPage(1);
-        }}
-      />
+      {campaignId && (
+        <Pagination
+          currentPage={currentPage}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={(value) => {
+            setItemsPerPage(value);
+            setCurrentPage(1);
+          }}
+        />
+      )}
 
       <Modal
         isOpen={isModalOpen}

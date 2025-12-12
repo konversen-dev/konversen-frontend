@@ -38,19 +38,15 @@ export const authService = {
         });
       }
       
-      // Clear localStorage
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('role');
+      // Clear semua localStorage dan sessionStorage
+      localStorage.clear();
+      sessionStorage.clear();
       
       return { success: true };
     } catch (error) {
-      // Tetap clear localStorage meskipun API call gagal
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('role');
+      // Tetap clear storage meskipun API call gagal
+      localStorage.clear();
+      sessionStorage.clear();
       
       throw error.response?.data || { message: 'Logout failed' };
     }

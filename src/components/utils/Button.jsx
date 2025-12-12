@@ -14,7 +14,7 @@ export default function Button({
 
   // Find selected option label
   const selectedOption = options.find(opt => opt.value === value);
-  const displayText = selectedOption ? selectedOption.label : text;
+  const displayText = options.length === 0 ? 'No Campaign' : (selectedOption ? selectedOption.label : text);
 
   // Warna tombol utama
   const baseStyle =
@@ -54,27 +54,33 @@ export default function Button({
       </button>
 
       {/* Dropdown menu */}
-      {variant === "dropdown" && isOpen && options.length > 0 && (
+      {variant === "dropdown" && isOpen && (
         <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-md max-h-60 overflow-y-auto">
-          {options.map((option, index) => (
-            <li
-              key={index}
-              onClick={() => {
-                setIsOpen(false);
-                if (onChange) {
-                  onChange(option.value);
-                }
-                if (option.onSelect) {
-                  option.onSelect(option.value);
-                }
-              }}
-              className={`px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer ${
-                option.value === value ? 'bg-blue-50 font-semibold' : ''
-              }`}
-            >
-              {option.label}
+          {options.length > 0 ? (
+            options.map((option, index) => (
+              <li
+                key={index}
+                onClick={() => {
+                  setIsOpen(false);
+                  if (onChange) {
+                    onChange(option.value);
+                  }
+                  if (option.onSelect) {
+                    option.onSelect(option.value);
+                  }
+                }}
+                className={`px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer ${
+                  option.value === value ? 'bg-blue-50 font-semibold' : ''
+                }`}
+              >
+                {option.label}
+              </li>
+            ))
+          ) : (
+            <li className="px-4 py-2 text-sm text-gray-500 cursor-default">
+              No campaigns available
             </li>
-          ))}
+          )}
         </ul>
       )}
     </div>

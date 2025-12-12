@@ -47,14 +47,21 @@ export default function Dashboard() {
       const response = await campaignService.getCampaignsDropdown();
       // Data ada langsung di response.data (array)
       const campaigns = response.data || [];
-      setCampaignOptions(
-        campaigns.map((c) => ({ label: c.name, value: c.id }))
-      );
+      
       if (campaigns.length > 0) {
+        setCampaignOptions(
+          campaigns.map((c) => ({ label: c.name, value: c.id }))
+        );
         setSelectedCampaign(campaigns[0].id);
+      } else {
+        // Jika tidak ada campaign, reset
+        setCampaignOptions([]);
+        setSelectedCampaign("");
       }
     } catch (error) {
       console.error("Failed to load campaigns:", error);
+      setCampaignOptions([]);
+      setSelectedCampaign("");
     }
   };
 
