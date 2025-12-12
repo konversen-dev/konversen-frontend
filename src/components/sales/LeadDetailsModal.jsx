@@ -158,13 +158,13 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
       {/* ==========================
           RIGHT CARD – LOGS MESSAGE
       ========================== */}
-      <div className="bg-white rounded-xl border shadow-sm flex flex-col w-full max-h-[50vh] px-4 py-2">
+      <div className="bg-white rounded-xl border shadow-sm flex flex-col w-full h-full px-4 py-2">
         <h2 className="text-primary-light font-semibold text-md mb-3">
           Logs & Message
         </h2>
 
         {/* LOG LIST */}
-        <div className="space-y-4 max-h-72 overflow-y-auto pr-1 md:pr-2">
+        <div className="flex-1 space-y-4 max-h-72 overflow-y-auto pr-1 md:pr-2">
           {loading ? (
             <div className="text-center text-gray-500 py-4">Loading notes...</div>
           ) : logs.length === 0 ? (
