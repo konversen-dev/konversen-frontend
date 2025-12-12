@@ -207,7 +207,7 @@ export default function Navbar() {
 
               <button
                 onClick={() => {
-                  navigate(`/${role}/dashboard`);
+                  navigate(`/${role.toLowerCase()}/dashboard`);
                   setMobileMenu(false);
                 }}
                 className="text-left"
@@ -218,7 +218,7 @@ export default function Navbar() {
               {(role === "Sales" || role === "Manager") && (
                 <button
                   onClick={() => {
-                    navigate(`/${role}/campaign`);
+                    navigate(`/${role.toLowerCase()}/campaign`);
                     setMobileMenu(false);
                   }}
                   className="text-left"
@@ -229,7 +229,7 @@ export default function Navbar() {
 
               <button
                 onClick={() => {
-                  navigate(`/${role}/profile`);
+                  navigate(`/${role.toLowerCase()}/profile`);
                   setMobileMenu(false);
                 }}
                 className="text-left"
