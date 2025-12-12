@@ -9,6 +9,17 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
   const [newMessage, setNewMessage] = useState("");
   const [newType, setNewType] = useState("Feedback");
 
+
+  const CLUSTER_DESCRIPTIONS = {
+    "New Prospects": "New customers, ideal for basic deposits.",
+    "Established Customers": "High-balance customers, suited for premium deposits.",
+    "Customers with Active Loans": "Loan-holding customers, ideal for tailored deposits.",
+    "Elite Professionals": "High-income customers, targeted with personalized deposits."
+  };
+
+  // Get cluster description
+  const clusterDescription = lead.cluster ? CLUSTER_DESCRIPTIONS[lead.cluster] : null;
+
   // REF UNTUK AUTO SCROLL
   const bottomRef = useRef(null);
 
@@ -94,7 +105,7 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
       ========================== */}
       <div className="bg-white rounded-xl shadow-sm border p-5 w-full">
         <h2 className="text-primary-light font-semibold text-md mb-4">
-          Lead Details
+          Lead Information
         </h2>
 
         <div className="space-y-3 text-sm text-primary-darkest">
@@ -116,6 +127,15 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
         <div className="space-y-3 text-sm text-primary-darkest">
           <DetailItem label="Probability" value={`${lead.score}%`} />
 
+                    <DetailItem label="Cluster" value={lead.cluster} />
+
+          {/* DESKRIPSI CLUSTER TANPA LABEL */}
+          {clusterDescription && (
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {clusterDescription}
+            </p>
+          )}
+
           {/* STATUS + DROPDOWN */}
           <div className="flex items-center gap-3">
             <span className="font-semibold">Status:</span>
@@ -128,15 +148,6 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
             />
             <StatusBadge status={lead.status} />
           </div>
-
-          <DetailItem label="Cluster" value={lead.cluster} />
-
-          {/* DESKRIPSI CLUSTER TANPA LABEL */}
-          {lead.clusterDescription && (
-            <p className="text-gray-600 text-sm leading-relaxed">
-              {lead.clusterDescription}
-            </p>
-          )}
         </div>
       </div>
 

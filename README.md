@@ -6,21 +6,26 @@ Konversify is a web application for managing leads and marketing campaigns with 
 
 ### Admin Dashboard
 - User account management (CRUD)
+- View user account details
+- Filter and search users
 - User activity monitoring
 - Access control and permissions
-- View user profile details
 
 ### Manager Dashboard
-- Campaign management (create, update, delete)
-- View campaign details and leads
-- Filtering and searching campaigns
-- Collaboration with sales team
+- Campaign management (CRUD).
+- Set collaborators for campaigns.
+- View all campaign details.
+- Filter and search campaigns.
+- View leads with scoring and cluster information.
+- Filter and search leads.
+- Add notes and update lead statuses across all campaigns.
 
 ### Sales Dashboard
-- Lead scoring with probability
-- Update lead status (Pending, Contacted, Converted, Failed)
-- Filter and search leads
-- Add notes for each lead
+- View campaign details for assigned campaigns only.
+- Filter and search campaigns.
+- View leads with scoring and cluster information for assigned campaigns only.
+- Filter and search leads.
+- Add notes and update lead statuses for assigned campaigns only.
 
 ## 🛠️ Tech Stack
 
@@ -155,7 +160,7 @@ src/
 
 Create a `.env` file in the root directory and add the following:
 ```env
-VITE_API_URL=http://localhost:your-backend-port
+API_URL=http://localhost:your-backend-port
 ```
 
 ## 🎯 Feature Details

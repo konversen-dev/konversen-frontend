@@ -81,7 +81,7 @@ export default function DetailAccountModal({ account }) {
         {/* LEFT PANEL */}
         <div className="bg-white rounded-xl shadow-sm border p-5">
           <h2 className="text-primary-light font-semibold text-md mb-4">
-            Detail Account
+            User Information
           </h2>
 
           {/* FOTO + NAMA */}

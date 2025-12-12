@@ -364,7 +364,7 @@ export default function AdminDashboard() {
       </Modal>
 
       {/* MODAL DETAIL ACCOUNT */}
-      <Modal isOpen={!!detailAccount} onClose={() => setDetailAccount(null)}>
+      <Modal isOpen={!!detailAccount} onClose={() => setDetailAccount(null)} title="Detail Account">
         {loadingDetail ? (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-light"></div>
