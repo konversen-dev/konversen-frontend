@@ -7,7 +7,7 @@ import handshakeIcon from "../../assets/sales/handshake.png";
 
 export default function DashboardSummary({ data = {} }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
       <SummaryCard 
         title="Total Leads" 
         value={data.totalLeads || 0} 

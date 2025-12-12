@@ -87,12 +87,12 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
   if (!lead) return null;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full h-[60vh] md:h-auto">
       
       {/* ==========================
           LEFT CARD – LEAD DETAILS
       ========================== */}
-      <div className="bg-white rounded-xl shadow-sm border p-5">
+      <div className="bg-white rounded-xl shadow-sm border p-5 w-full">
         <h2 className="text-primary-light font-semibold text-md mb-4">
           Lead Details
         </h2>
@@ -143,13 +143,13 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
       {/* ==========================
           RIGHT CARD – LOGS MESSAGE
       ========================== */}
-      <div className="bg-white rounded-xl shadow-sm border p-5 flex flex-col">
+      <div className="bg-white rounded-xl border shadow-sm flex flex-col w-full max-h-[50vh] px-4 py-2">
         <h2 className="text-primary-light font-semibold text-md mb-3">
           Logs & Message
         </h2>
 
         {/* LOG LIST */}
-        <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+        <div className="space-y-4 max-h-72 overflow-y-auto pr-1 md:pr-2">
           {loading ? (
             <div className="text-center text-gray-500 py-4">Loading notes...</div>
           ) : logs.length === 0 ? (
@@ -173,14 +173,14 @@ export default function LeadDetailsModal({ lead, onStatusChange, campaignId }) {
         {/* TEXT INPUT */}
         <textarea
           placeholder="Type message here..."
-          className="w-full h-12 border border-gray-300 rounded-lg p-3 text-sm resize-none focus:ring-2 focus:ring-primary-light focus:outline-none mt-4"
+          className="w-full min-h-[80px] border border-gray-300 rounded-lg p-3 text-sm resize-none focus:ring-2 focus:ring-primary-light"
           rows={4}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         ></textarea>
 
         {/* ACTION BUTTON */}
-        <div className="flex gap-2 mt-3 self-end">
+        <div className="flex flex-col sm:flex-row gap-2 mt-3 w-full justify-end">
           {/* SELECT TIPE */}
           <CustomDropdown
             options={["Feedback", "Internal"]}
@@ -220,30 +220,42 @@ function LogCard({ sender, type, time, message }) {
     feedback: "bg-blue-100 text-blue-700",
     internal: "bg-purple-100 text-purple-700",
     system: "bg-yellow-100 text-yellow-800",
-    // Fallback for any other types
     general: "bg-gray-100 text-gray-700",
   };
 
-  // Capitalize first letter for display
-  const displayType = type.charAt(0).toUpperCase() + type.slice(1);
+  const displayType =
+    type?.charAt(0).toUpperCase() + type?.slice(1);
 
   return (
-    <div className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm">
-      <div className="flex justify-between items-start">
-        <h4 className="font-semibold text-primary-darkest">{sender}</h4>
+    <div className="border border-gray-200 rounded-xl p-3 bg-white w-full">
 
+      {/* HEADER */}
+      <div className="flex items-center justify-between gap-2">
+        {/* Nama Sales */}
+        <h4 className="font-semibold text-sm text-gray-800 truncate max-w-[70%]">
+          {sender}
+        </h4>
+
+        {/* Badge */}
         <span
-          className={`text-xs px-2 py-1 rounded-md font-medium ${typeStyles[type.toLowerCase()] || typeStyles.general}`}
+          className={`text-xs px-2 py-1 rounded-md font-medium whitespace-nowrap ${
+            typeStyles[type?.toLowerCase()] || typeStyles.general
+          }`}
         >
           {displayType}
         </span>
       </div>
 
-      <p className="text-xs text-gray-500 mt-1">{time}</p>
+      {/* Time */}
+      <p className="text-xs text-gray-500 mt-1">
+        {time}
+      </p>
 
-      <p className="text-sm mt-2 text-gray-700 leading-relaxed">
+      {/* Message */}
+      <p className="text-sm mt-2 text-gray-700 leading-relaxed break-words">
         {message}
       </p>
     </div>
   );
 }
+

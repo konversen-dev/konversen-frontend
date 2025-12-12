@@ -10,7 +10,7 @@ import activeAccountIcon from "../../assets/admin/activeAccount.png";
 
 export default function AdminSummary({ data }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
       <SummaryCard title="Total Accounts" value={data.totalTeam} iconSrc={totalTeamIcon} />
       <SummaryCard title="Sales" value={data.totalSales} iconSrc={salesIcon} />
       <SummaryCard title="Managers" value={data.totalManagers} iconSrc={managerIcon} />

@@ -6,7 +6,7 @@ export default function CampaignForm({
   initialData,
   onSave,
   onCancel,
-  errorMessage, // <-- menerima error dari parent
+  errorMessage,
 }) {
   const [form, setForm] = useState({
     name: initialData?.name || "",
@@ -43,7 +43,7 @@ export default function CampaignForm({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const apiData = {
+    onSave({
       name: form.name,
       description: form.description,
       targetLeads: Number(form.targetLeads),
@@ -51,73 +51,83 @@ export default function CampaignForm({
       startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
       endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
       collaboratorEmails: form.collaboratorEmails,
-    };
-
-    onSave(apiData);
+    });
   };
 
   return (
-    <form className="space-y-6 w-full" onSubmit={handleSubmit}>
-      {/* Title */}
-      <div className="flex items-center justify-between">
-        <div className="w-6" />
-        <h2 className="text-xl font-semibold text-[#FF9E1C] text-center flex-1">
-          {mode === "edit" ? "Edit Campaign" : "Add Campaign"}
-        </h2>
-        <div className="w-6" />
-      </div>
+    <form
+      onSubmit={handleSubmit}
+      className="
+        w-full
+        space-y-2 sm:space-y-3
+        max-h-[calc(100vh-120px)]
+        overflow-y-auto
+        pr-2
+      "
+    >
+      {/* TITLE */}
+      <h2 className="text-center font-semibold text-[#FF9E1C] text-xs sm:text-sm">
+        {mode === "edit" ? "Edit Campaign" : "Add Campaign"}
+      </h2>
 
-      {/* INLINE ERROR ABOVE FORM */}
+      {/* ERROR */}
       {errorMessage && (
-        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700">
+        <div className="p-1.5 rounded bg-red-50 border border-red-200 text-red-700 text-[10px] sm:text-xs">
           {errorMessage}
         </div>
       )}
 
-      {/* Campaign Name */}
+      {/* CAMPAIGN NAME */}
       <div>
-        <label className="text-sm font-semibold">Campaign Name :</label>
+        <label className="font-semibold text-[10px] sm:text-xs">
+          Campaign Name
+        </label>
         <input
           name="name"
           value={form.name}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          className="w-full mt-0.5 border rounded px-2 py-1 text-[10px] sm:text-xs"
         />
       </div>
 
-      {/* Description */}
+      {/* DESCRIPTION */}
       <div>
-        <label className="text-sm font-semibold">Description :</label>
+        <label className="font-semibold text-[10px] sm:text-xs">
+          Description
+        </label>
         <textarea
           name="description"
-          rows={3}
+          rows={2}
           value={form.description}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 resize-none"
+          className="w-full mt-0.5 border rounded px-2 py-1 text-[10px] sm:text-xs resize-none"
         />
       </div>
 
-      {/* Target Lead & Status */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* TARGET + STATUS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <div>
-          <label className="text-sm font-semibold">Total Target Leads :</label>
+          <label className="font-semibold text-[10px] sm:text-xs">
+            Total Target Leads
+          </label>
           <input
             name="targetLeads"
             type="number"
             value={form.targetLeads}
-            placeholder="0"
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+            className="w-full mt-0.5 border rounded px-2 py-1 text-[10px] sm:text-xs"
           />
         </div>
 
         <div>
-          <label className="text-sm font-semibold">Status :</label>
+          <label className="font-semibold text-[10px] sm:text-xs">
+            Status
+          </label>
           <select
             name="status"
             value={form.status}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+            className="w-full mt-0.5 border rounded px-2 py-1 text-[10px] sm:text-xs"
           >
             <option value="Active">Active</option>
             <option value="Completed">Completed</option>
@@ -126,65 +136,67 @@ export default function CampaignForm({
         </div>
       </div>
 
-      {/* Period Date */}
+      {/* PERIODE */}
       <div>
-        <label className="text-sm font-semibold">Periode :</label>
-        <div className="flex items-center gap-3 mt-1">
-          {/* Start Date */}
+        <label className="font-semibold text-[10px] sm:text-xs">
+          Periode
+        </label>
+
+        <div className="flex flex-col sm:flex-row gap-1.5 mt-0.5">
           <div className="relative flex-1">
-            <FiCalendar className="absolute left-2 top-3 text-gray-400" />
+            <FiCalendar className="absolute left-2 top-2 text-gray-400 text-xs" />
             <input
               type="date"
               name="startDate"
               value={form.startDate}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg pl-9 py-2"
+              className="w-full border rounded pl-7 py-1 text-[10px] sm:text-xs"
             />
           </div>
 
-          <span className="text-gray-500">-</span>
-
-          {/* End Date */}
           <div className="relative flex-1">
-            <FiCalendar className="absolute left-2 top-3 text-gray-400" />
+            <FiCalendar className="absolute left-2 top-2 text-gray-400 text-xs" />
             <input
               type="date"
               name="endDate"
               value={form.endDate}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg pl-9 py-2"
+              className="w-full border rounded pl-7 py-1 text-[10px] sm:text-xs"
             />
           </div>
         </div>
       </div>
 
-      {/* Invite Section */}
+      {/* INVITE */}
       <div>
-        <label className="text-sm font-semibold">Invite :</label>
+        <label className="font-semibold text-[10px] sm:text-xs">
+          Invite
+        </label>
 
-        <div className="flex gap-2 mt-1">
+        <div className="flex flex-col sm:flex-row gap-1.5 mt-0.5">
           <input
             name="inviteEmail"
             value={form.inviteEmail}
             onChange={handleChange}
-            placeholder="Add another sales email address to invite"
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2"
+            placeholder="Add sales email"
+            className="flex-1 border rounded px-2 py-1 text-[10px] sm:text-xs"
           />
+
           <button
             type="button"
             onClick={addInvite}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+            className="bg-blue-600 text-white px-3 py-1 rounded text-[10px] sm:text-xs"
           >
             Invite
           </button>
         </div>
 
-        {/* Bubbles */}
-        <div className="flex flex-wrap gap-2 mt-3">
+        {/* EMAIL CHIPS */}
+        <div className="flex flex-wrap gap-1 mt-1.5">
           {form.collaboratorEmails.map((email) => (
             <span
               key={email}
-              className="px-3 py-1 bg-gray-100 border rounded-full text-sm flex items-center gap-2"
+              className="px-2 py-0.5 bg-gray-100 border rounded-full text-[9px] flex items-center gap-1"
             >
               {email}
               <button
@@ -199,19 +211,19 @@ export default function CampaignForm({
         </div>
       </div>
 
-      {/* Buttons */}
-      <div className="flex justify-end gap-3 mt-4">
+      {/* ACTION BUTTONS */}
+      <div className="flex flex-col-reverse sm:flex-row justify-end gap-1.5 pt-1">
         <button
           type="button"
           onClick={onCancel}
-          className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg"
+          className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-[10px] sm:text-xs"
         >
           Cancel
         </button>
 
         <button
           type="submit"
-          className="px-5 py-2 bg-green-600 text-white rounded-lg"
+          className="px-3 py-1 bg-green-600 text-white rounded text-[10px] sm:text-xs"
         >
           Save
         </button>

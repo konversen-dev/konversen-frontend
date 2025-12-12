@@ -214,25 +214,41 @@ export default function ManagerCampaign() {
       <Navbar />
       <DashboardContent>
         {/* HEADER */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-primary-darkest">Campaign</h1>
-            <p className="text-sm text-primary-dark">
-              Manage & create campaigns to expand your lead reach.
-            </p>
+        <div className="flex items-start justify-between gap-4 mb-6">
+          {/* LEFT TEXT */}
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Campaign
+              </h1>
+              <p className="text-sm text-gray-600">
+                Manage & create campaigns to expand your lead reach.
+              </p>
+            </div>
           </div>
 
+
+          {/* RIGHT BUTTON */}
           <button
             onClick={() => {
               setShowForm(true);
               setEditing(null);
               setFormError("");
             }}
-            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg"
+            className="
+              shrink-0
+              px-4 py-2
+              bg-blue-600 text-white font-semibold
+              rounded-lg
+              text-xs sm:text-sm
+              whitespace-nowrap
+            "
           >
             + Add Campaign
           </button>
         </div>
+
+
 
         {/* SUMMARY CARD */}
         <CampaignSummary data={summary} />

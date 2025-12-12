@@ -11,7 +11,7 @@ import usersIcon from "../../assets/sales/users.png";
 
 export default function CampaignSummary({ data }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
 
       <SummaryCard
         title="Total Campaigns"

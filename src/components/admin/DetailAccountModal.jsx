@@ -14,7 +14,7 @@ function ActivityBadge({ type }) {
   };
 
   return (
-    <span className={`text-xs px-3 py-1 rounded-md font-semibold ${colors[type] || "bg-gray-100 text-gray-500"}`}>
+    <span className={`text-xs px-3 py-1 text-center w-[65px] rounded-md font-semibold ${colors[type] || "bg-gray-100 text-gray-500"}`}>
       {type || "-"}
     </span>
   );
@@ -113,48 +113,71 @@ export default function DetailAccountModal({ account }) {
             Logs / Activity
           </h2>
 
-          <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+          {/* RESPONSIVE SCROLL CONTAINER */}
+          <div
+            className="
+              flex flex-row sm:flex-col
+              gap-4
+              overflow-x-auto sm:overflow-y-auto
+              overflow-y-hidden sm:overflow-x-hidden
+              max-h-none sm:max-h-80
+              scroll-smooth
+              pr-1
+            "
+          >
             {loadingActivities ? (
-              <div className="text-gray-400 text-center bg-gray-100 p-4 rounded-lg text-sm">
+              <div className="min-w-full sm:min-w-0 text-center bg-gray-100 p-4 rounded-lg text-sm text-gray-400">
                 Loading activities...
               </div>
             ) : activities.length > 0 ? (
               activities.map((activity, idx) => (
                 <div
                   key={activity.id || idx}
-                  className="border border-gray-200 rounded-xl p-4 bg-gray-50 shadow-sm"
+                  className="
+                    min-w-[260px] sm:min-w-0
+                    border border-gray-200
+                    rounded-xl
+                    p-4
+                    bg-gray-50
+                    shadow-sm
+                    flex-shrink-0
+                  "
                 >
+                  {/* HEADER */}
                   <div className="flex justify-between items-center mb-1">
-                    <div className="flex gap-2 text-xs text-gray-600">
-                      {activity.campaign_name !== 'N/A' ? (
-                        <span className="font-semibold">{activity.campaign_name}</span>
-                      ) : activity.lead_name !== 'N/A' ? (
-                        <span className="font-semibold">{activity.lead_name}</span>
-                      ) : (
-                        <span className="font-semibold text-sm">N/A</span>
-                      )}
+                    <div className="text-xs font-semibold text-gray-700 truncate">
+                      {activity.campaign_name !== "N/A"
+                        ? activity.campaign_name
+                        : activity.lead_name !== "N/A"
+                        ? activity.lead_name
+                        : "N/A"}
                     </div>
+
                     <ActivityBadge type={activity.action} />
                   </div>
 
-                  <p className="text-xs text-gray-500 mt-1">
+                  {/* TIME */}
+                  <p className="text-[11px] text-gray-500 mt-1">
                     {activity.time ? formatDate(activity.time) : "-"}
                   </p>
 
+                  {/* DESCRIPTION */}
                   {activity.description && (
-                    <p className="text-xs text-gray-700 mt-2 whitespace-pre-line">
+                    <p className="text-xs text-gray-700 mt-2 leading-relaxed">
                       {activity.description}
                     </p>
                   )}
                 </div>
               ))
             ) : (
-              <div className="text-gray-400 text-center bg-gray-100 p-4 rounded-lg text-sm">
+              <div className="min-w-full sm:min-w-0 text-center bg-gray-100 p-4 rounded-lg text-sm text-gray-400">
                 No activity logs.
               </div>
             )}
           </div>
         </div>
+
+
 
       </div>
     </div>

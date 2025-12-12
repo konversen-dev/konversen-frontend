@@ -282,7 +282,7 @@ export default function AdminDashboard() {
                 setIsAddOpen(true);
                 setFormError("");
               }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg sm:w-auto min-w-[130px]"
             >
               Add Account
             </button>
