@@ -55,6 +55,8 @@ api.interceptors.response.use(
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('userId');
         localStorage.removeItem('role');
+        localStorage.removeItem('fullname');
+        localStorage.removeItem('avatarUrl');
         window.location.href = '/';
         return Promise.reject(refreshError);
       }

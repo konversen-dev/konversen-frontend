@@ -10,13 +10,15 @@ export const authService = {
       });
       
       if (response.data.status === 'success') {
-        const { accessToken, refreshToken, id, role } = response.data.data;
+        const { accessToken, refreshToken, id, role, fullname, avatarUrl, avatar_url } = response.data.data;
         
         // Simpan ke localStorage
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('userId', id);
         localStorage.setItem('role', role);
+        localStorage.setItem('fullname', fullname || '');
+        localStorage.setItem('avatarUrl', avatar_url || avatarUrl || '');
         
         return response.data;
       }
@@ -91,6 +93,16 @@ export const authService = {
   // Get current user ID
   getUserId() {
     return localStorage.getItem('userId');
+  },
+
+  // Get current user fullname
+  getFullname() {
+    return localStorage.getItem('fullname');
+  },
+
+  // Get current user avatar URL
+  getAvatarUrl() {
+    return localStorage.getItem('avatarUrl');
   },
 };
 

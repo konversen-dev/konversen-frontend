@@ -127,9 +127,9 @@ export default function Navbar() {
             onClick={() => setOpen(!open)}
             className="cursor-pointer"
           >
-            {user?.avatar_url ? (
+            {user?.avatarUrl ? (
               <img
-                src={user.avatar_url}
+                src={user.avatarUrl}
                 alt="Profile"
                 className="w-8 h-8 rounded-full object-cover border border-gray-300 hover:border-primary-light"
               />
@@ -186,9 +186,9 @@ export default function Navbar() {
 
             {/* Avatar */}
             <div className="flex items-center gap-3 mb-6">
-              {user?.avatar_url ? (
+              {user?.avatarUrl ? (
                 <img
-                  src={user.avatar_url}
+                  src={user.avatarUrl}
                   alt="Profile"
                   className="w-10 h-10 rounded-full object-cover border border-gray-300"
                 />

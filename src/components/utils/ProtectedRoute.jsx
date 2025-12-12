@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import authService from '../../services/authService';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -16,7 +17,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     );
   }
 
-  if (!user) {
+  // Double check: cek state user DAN localStorage
+  if (!user || !authService.isAuthenticated()) {
     return <Navigate to="/" replace />;
   }
 

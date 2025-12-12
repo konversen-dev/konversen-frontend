@@ -15,11 +15,15 @@ export const AuthProvider = ({ children }) => {
       const isAuth = authService.isAuthenticated();
       const role = authService.getUserRole();
       const userId = authService.getUserId();
+      const fullname = authService.getFullname();
+      const avatarUrl = authService.getAvatarUrl();
 
       if (isAuth && role && userId) {
         setUser({
           id: userId,
           role: role,
+          fullname: fullname || '',
+          avatarUrl: avatarUrl || null,
         });
       }
       setLoading(false);
@@ -41,7 +45,7 @@ export const AuthProvider = ({ children }) => {
           id,
           role,
           fullname: fullname || '',
-          avatar_url: avatarURL,
+          avatarUrl: avatarURL,
         });
 
         // Navigate based on role
@@ -70,12 +74,13 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
       setUser(null);
-      navigate('/');
+      // Force redirect untuk memastikan logout langsung
+      window.location.href = '/';
     } catch (error) {
       console.error('Logout error:', error);
       // Still logout locally even if API call fails
       setUser(null);
-      navigate('/');
+      window.location.href = '/';
     }
   };
 
@@ -83,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     setUser((prevUser) => ({
       ...prevUser,
       fullname: profileData.fullname || prevUser.fullname,
-      avatar_url: profileData.avatar_url || prevUser.avatar_url,
+      avatarUrl: profileData.avatarUrl || profileData.avatar_url || prevUser.avatarUrl,
     }));
   };
 
