@@ -1,5 +1,6 @@
 import React from "react";
 import { FiSearch } from "react-icons/fi";
+import CustomDropdown from "../utils/CustomDropdown";
 
 export default function CampaignFilterBar({
   search,
@@ -59,21 +60,17 @@ export default function CampaignFilterBar({
 
           {/* STATUS */}
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">Status</label>
-            <select
-              value={filters.status}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, status: e.target.value }))
+            <CustomDropdown
+              label="Status"
+              options={["All Status", ...statusOptions]}
+              defaultValue={filters.status || "All Status"}
+              onChange={(value) =>
+                setFilters((prev) => ({ 
+                  ...prev, 
+                  status: value === "All Status" ? "" : value 
+                }))
               }
-              className="border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-light"
-            >
-              <option value="">All</option>
-              {statusOptions.map((st) => (
-                <option key={st} value={st}>
-                  {st}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
         </div>
