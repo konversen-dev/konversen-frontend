@@ -160,7 +160,7 @@ src/
 
 Create a `.env` file in the root directory and add the following:
 ```env
-API_URL=http://localhost:your-backend-port
+VITE_API_URL=http://localhost:your-backend-port
 ```
 
 ## 🎯 Feature Details
