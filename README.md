@@ -48,8 +48,8 @@ Make sure you have installed:
 
 1. Clone this repository
 ```bash
-git clone <repository-url>
-cd FRONTEND-main
+git clone https://github.com/konversen-dev/konversen-frontend.git
+cd konversen-frontend
 ```
 
 2. Install dependencies
