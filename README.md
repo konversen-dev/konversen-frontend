@@ -57,12 +57,21 @@ cd FRONTEND-main
 npm install
 ```
 
-3. Run development server
+3. Setup environment variables
+
+Create a `.env` file in the project root:
+
+```env
+# API Configuration
+VITE_API_URL=http://localhost:your-backend-port
+```
+
+4. Run development server
 ```bash
 npm run dev
 ```
 
-4. Open browser and access
+5. Open browser and access
 ```
 http://localhost:5173
 ```
@@ -155,13 +164,6 @@ src/
 - `/sales/dashboard` - Sales dashboard
 - `/sales/campaign` - Campaign details and leads
 - `/sales/profile` - Sales profile
-
-## 🌐 Environment Variables
-
-Create a `.env` file in the root directory and add the following:
-```env
-VITE_API_URL=http://localhost:your-backend-port
-```
 
 ## 🎯 Feature Details
 
